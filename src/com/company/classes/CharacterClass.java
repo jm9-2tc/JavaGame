@@ -204,4 +204,29 @@ public abstract class CharacterClass implements BaseClass {
     public void setAttackRightImage() {
         this.image = this.attackRightImage;
     }
+
+    public void tryChangePosition(int newX, int newY) {
+        this.x = newX;
+        this.y = newY;
+    }
+
+    public abstract void moveLeft();
+    public abstract void moveRight();
+    public abstract void moveUp();
+    public abstract void moveDown();
+
+    public abstract void attackLeft();
+    public abstract void attackRight();
+
+    protected void setup() {
+        this.setLevel(0);
+        this.setMaxHealthPoints(1000);
+        this.setHealthPoints(1000);
+        this.setManaPoints(200);
+        this.setMaxManaPoints(200);
+        this.setAttackType(AttackType.PHYSICAL);
+        this.setAttackAmount(5);
+
+        this.uploadImage("1.png", "2.png", "3.png");
+    }
 }

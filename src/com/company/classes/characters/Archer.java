@@ -1,5 +1,6 @@
 package com.company.classes.characters;
 
+import com.company.GameField;
 import com.company.classes.AttackType;
 import com.company.classes.CharacterClass;
 
@@ -26,15 +27,33 @@ public class Archer extends CharacterClass {
         setup();
     }
 
-    private void setup() {
-        this.setLevel(0);
-        this.setMaxHealthPoints(1000);
-        this.setHealthPoints(1000);
-        this.setManaPoints(200);
-        this.setMaxManaPoints(200);
-        this.setAttackType(AttackType.PHYSICAL);
-        this.setAttackAmount(5);
+    @Override
+    public void moveLeft() {
+        tryChangePosition(getX() - 5, getY());
+    }
 
-        this.uploadImage("1.png", "2.png", "3.png");
+    @Override
+    public void moveRight() {
+        tryChangePosition(getX() + 5, getY());
+    }
+
+    @Override
+    public void moveUp() {
+        tryChangePosition(getX(), getY() - 5);
+    }
+
+    @Override
+    public void moveDown() {
+        tryChangePosition(getX(), getY() + 5);
+    }
+
+    @Override
+    public void attackLeft() {
+
+    }
+
+    @Override
+    public void attackRight() {
+
     }
 }

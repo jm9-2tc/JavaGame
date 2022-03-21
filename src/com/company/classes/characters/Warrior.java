@@ -1,9 +1,6 @@
 package com.company.classes.characters;
 
-import com.company.classes.AttackType;
 import com.company.classes.CharacterClass;
-
-import java.awt.event.KeyEvent;
 
 public class Warrior extends CharacterClass {
 
@@ -27,15 +24,33 @@ public class Warrior extends CharacterClass {
         setup();
     }
 
-    private void setup() {
-        this.setLevel(0);
-        this.setMaxHealthPoints(1000);
-        this.setHealthPoints(1000);
-        this.setManaPoints(200);
-        this.setMaxManaPoints(200);
-        this.setAttackType(AttackType.PHYSICAL);
-        this.setAttackAmount(5);
+    @Override
+    public void moveLeft() {
+        tryChangePosition(getX() - 8, getY());
+    }
 
-        this.uploadImage("1.png", "2.png", "3.png");
+    @Override
+    public void moveRight() {
+        tryChangePosition(getX() + 8, getY());
+    }
+
+    @Override
+    public void moveUp() {
+        tryChangePosition(getX(), getY() - 8);
+    }
+
+    @Override
+    public void moveDown() {
+        tryChangePosition(getX(), getY() + 8);
+    }
+
+    @Override
+    public void attackLeft() {
+
+    }
+
+    @Override
+    public void attackRight() {
+
     }
 }
