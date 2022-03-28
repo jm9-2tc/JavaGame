@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.classes.CharacterClass;
+import com.company.classes.Constants;
 import com.company.classes.arenas.Syberia;
 
 public class Team {
@@ -34,6 +35,6 @@ public class Team {
     }
 
     public void runArena() {
-        MainWindow mw = new MainWindow(375, 410, this);
+        MainWindow mw = new MainWindow(this);
     }
 }

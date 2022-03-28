@@ -14,6 +14,8 @@ public abstract class CharacterClass implements BaseClass {
     private int maxHealthPoints;
     private int maxManaPoints;
 
+    public final int id;
+
     public final int keyMoveUp;
     public final int keyMoveDown;
     public final int keyMoveLeft;
@@ -25,7 +27,8 @@ public abstract class CharacterClass implements BaseClass {
 
     }*/
 
-    public CharacterClass() {
+    public CharacterClass(int id) {
+        this.id = id;
         this.keyMoveUp= KeyEvent.VK_W;
         this.keyMoveDown = KeyEvent.VK_S;
         this.keyMoveLeft = KeyEvent.VK_A;
@@ -34,7 +37,8 @@ public abstract class CharacterClass implements BaseClass {
         this.keyAttackRight = KeyEvent.VK_E;
     }
 
-    public CharacterClass(int keyMoveUp, int keyMoveDown, int keyMoveLeft, int keyMoveRight, int keyAttackLeft, int keyAttackRight) {
+    public CharacterClass(int id, int keyMoveUp, int keyMoveDown, int keyMoveLeft, int keyMoveRight, int keyAttackLeft, int keyAttackRight) {
+        this.id = id;
         this.keyMoveUp= keyMoveUp;
         this.keyMoveDown = keyMoveDown;
         this.keyMoveLeft = keyMoveLeft;
@@ -127,6 +131,7 @@ public abstract class CharacterClass implements BaseClass {
 
     @Override
     public void attack() {
+
     }
 
     @Override
@@ -206,8 +211,14 @@ public abstract class CharacterClass implements BaseClass {
     }
 
     public void tryChangePosition(int newX, int newY) {
-        this.x = newX;
-        this.y = newY;
+        if(gameCells[newX][newY] == 0) {
+            gameCells[x][y] = 0;
+            gameCells[newX][newY] = id;
+            x = newX;
+            y = newY;
+        } else {
+            reduceHealth();
+        }
     }
 
     public abstract void moveLeft();
@@ -228,5 +239,9 @@ public abstract class CharacterClass implements BaseClass {
         this.setAttackAmount(5);
 
         this.uploadImage("1.png", "2.png", "3.png");
+    }
+
+    private void reduceHealth() {
+        setHealthPoints(healthPoints - 50);
     }
 }

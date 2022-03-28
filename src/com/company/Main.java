@@ -15,8 +15,8 @@ public class Main {
         //war1.info();
 
         Team team = new Team (
-            new Warrior("Aragorn", 0, 0, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_Q, KeyEvent.VK_E),
-            new Mage("Gendolf", 0, 0, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_O, KeyEvent.VK_P),
+            new Warrior("Aragorn", 1, 0, 0, KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_Q, KeyEvent.VK_E),
+            new Mage("Gendolf", 2, 0, 0, KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_O, KeyEvent.VK_P)
             //new Archer("Legolas"),
             //new Healer("Radogast")
         );

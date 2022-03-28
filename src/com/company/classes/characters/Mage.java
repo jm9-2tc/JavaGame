@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 
 public class Mage extends CharacterClass {
 
-    public Mage(String name) {
-        super();
+    public Mage(String name, int id) {
+        super(id);
 
         this.setX(0);
         this.setY(0);
@@ -17,8 +17,8 @@ public class Mage extends CharacterClass {
         setup();
     }
 
-    public Mage(String name, int x, int y, int key1, int key2, int key3, int key4, int key5, int key6) {
-        super(key1, key2, key3, key4, key5, key6);
+    public Mage(String name, int id, int x, int y, int key1, int key2, int key3, int key4, int key5, int key6) {
+        super(id, key1, key2, key3, key4, key5, key6);
 
         this.setX(x);
         this.setY(y);

@@ -4,8 +4,8 @@ import com.company.classes.CharacterClass;
 
 public class Warrior extends CharacterClass {
 
-    public Warrior(String name) {
-        super();
+    public Warrior(String name, int id) {
+        super(id);
 
         this.setX(0);
         this.setY(0);
@@ -14,8 +14,8 @@ public class Warrior extends CharacterClass {
         setup();
     }
 
-    public Warrior(String name, int x, int y, int key1, int key2, int key3, int key4, int key5, int key6) {
-        super(key1, key2, key3, key4, key5, key6);
+    public Warrior(String name, int id, int x, int y, int key1, int key2, int key3, int key4, int key5, int key6) {
+        super(id, key1, key2, key3, key4, key5, key6);
 
         this.setX(x);
         this.setY(y);
@@ -26,22 +26,22 @@ public class Warrior extends CharacterClass {
 
     @Override
     public void moveLeft() {
-        tryChangePosition(getX() - 8, getY());
+        tryChangePosition(getX() - 4, getY());
     }
 
     @Override
     public void moveRight() {
-        tryChangePosition(getX() + 8, getY());
+        tryChangePosition(getX() + 4, getY());
     }
 
     @Override
     public void moveUp() {
-        tryChangePosition(getX(), getY() - 8);
+        tryChangePosition(getX(), getY() - 4);
     }
 
     @Override
     public void moveDown() {
-        tryChangePosition(getX(), getY() + 8);
+        tryChangePosition(getX(), getY() + 4);
     }
 
     @Override
