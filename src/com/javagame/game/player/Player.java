@@ -24,6 +24,7 @@ public abstract class Player implements IEntity {
     private Image attackRightImage;
 
     private final Type type;
+    private final KeyBinds keyBinds;
 
     private final int maxHealth;
     private final int maxStamina;
@@ -31,8 +32,9 @@ public abstract class Player implements IEntity {
 
     private final GameInstance gameInstance;
 
-    public Player(GameInstance gameInstance, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
+        this.keyBinds = keyBinds;
         this.type = type;
 
         this.maxHealth = maxHealth;
@@ -98,7 +100,15 @@ public abstract class Player implements IEntity {
 
 
     public void handleKeyEvent(int keyCode) {
-
+        if (keyCode == keyBinds.moveUp) {
+            tryChangePos(x, y - 1);
+        } else if (keyCode == keyBinds.moveDown) {
+            tryChangePos(x, y + 1);
+        } else if (keyCode == keyBinds.moveLeft) {
+            tryChangePos(x - 1, y);
+        } else if (keyCode == keyBinds.moveRight) {
+            tryChangePos(x + 1, y);
+        }
     }
 
     private void tryChangePos(int newX, int newY) {
@@ -117,6 +127,21 @@ public abstract class Player implements IEntity {
 
         if(Math.sqrt((distX * distX) + (distY * distY)) <= attackDistance) {
             gameInstance.attackPlayerById(gameInstance.getBoardField(attackX, attackY), damage);
+        }
+    }
+
+    public static class KeyBinds {
+        public final int moveUp;
+        public final int moveDown;
+        public final int moveLeft;
+        public final int moveRight;
+
+
+        public KeyBinds(int moveUp, int moveDown, int moveLeft, int moveRight) {
+            this.moveUp = moveUp;
+            this.moveDown = moveDown;
+            this.moveLeft = moveLeft;
+            this.moveRight = moveRight;
         }
     }
 
