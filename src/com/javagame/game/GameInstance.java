@@ -10,13 +10,13 @@ public class GameInstance {
     public final GameEvents gameEvents;
 
     public final Team[] teams;
-    public final Map<Integer, Player> players;
+    public final Player[] players;
 
     public final int[][] board;
     public final int width;
     public final int height;
 
-    public GameInstance(GameEvents gameEvents, Team[] teams, Map<Integer, Player> players, int width, int height) {
+    public GameInstance(GameEvents gameEvents, Team[] teams, Player[] players, int width, int height) {
         this.gameEvents = gameEvents;
         this.teams = teams;
         this.players = players;
@@ -24,6 +24,10 @@ public class GameInstance {
         this.width = width;
         this.height = height;
         this.board = new int[width][height];
+    }
+
+    public boolean validatePlayerSelection(int expectedTeam, int id) {
+        return players[id].team == teams[expectedTeam];
     }
 
     public void attackPlayerById(int id, int damage) {

@@ -1,5 +1,7 @@
 package com.javagame.game;
 
+import com.javagame.game.player.Player;
+
 public class GameEvents implements Runnable {
     private final GameInstance gameInstance;
 
@@ -14,12 +16,18 @@ public class GameEvents implements Runnable {
     }
 
     public void play() {
+        while(playerSelected && playerDidAction)
         currentTeamNumber = currentTeamNumber < gameInstance.teams.length - 1 ? currentTeamNumber + 1 : 0;
     }
 
     public void handleClickEvent(int x, int y) {
         if (!playerSelected) {
-            playerSelected = true;
+            int nextPlayerNumber = gameInstance.getBoardField(x, y);
+
+            if (gameInstance.validatePlayerSelection(currentTeamNumber, nextPlayerNumber)) {
+                currentPlayerNumber = nextPlayerNumber;
+                playerSelected = true;
+            }
         } else {
             playerDidAction = true;
         }

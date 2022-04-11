@@ -23,19 +23,22 @@ public abstract class Player implements IEntity {
     private Image attackLeftImage;
     private Image attackRightImage;
 
-    private final Type type;
-    private final KeyBinds keyBinds;
+    public final Team team;
 
-    private final int maxHealth;
-    private final int maxStamina;
-    private final int maxMana;
+    public final Type type;
+    public final KeyBinds keyBinds;
+
+    public final int maxHealth;
+    public final int maxStamina;
+    public final int maxMana;
 
     private final GameInstance gameInstance;
 
-    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, KeyBinds keyBinds, Team team, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
         this.keyBinds = keyBinds;
         this.type = type;
+        this.team = team;
 
         this.maxHealth = maxHealth;
         this.maxStamina = maxStamina;

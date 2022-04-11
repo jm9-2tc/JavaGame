@@ -2,6 +2,8 @@ package com.javagame.gui;
 
 import com.javagame.Constants;
 import com.javagame.game.GameEvents;
+import com.javagame.game.GameInstance;
+import com.javagame.game.player.Player;
 
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
@@ -11,12 +13,20 @@ import java.awt.event.MouseEvent;
 
 public class GameWindow extends JPanel {
     private final GameEvents gameEvents;
+    private final GameInstance gameInstance;
 
     private int mousePosX = 0;
     private int mousePosY = 0;
 
-    public GameWindow(GameEvents gameEvents) {
+    public GameWindow(GameEvents gameEvents, GameInstance gameInstance) {
         this.gameEvents = gameEvents;
+        this.gameInstance = gameInstance;
+    }
+
+    public void draw() {
+        for (Player player : gameInstance.players) {
+
+        }
     }
 
     public class KeyListener extends KeyAdapter {
