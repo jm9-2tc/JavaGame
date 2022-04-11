@@ -1,5 +1,6 @@
 package com.javagame.game.player;
 
+import com.javagame.Constants;
 import com.javagame.game.GameInstance;
 import com.javagame.game.IEntity;
 
@@ -13,11 +14,16 @@ public abstract class Player implements IEntity {
     private int x;
     private int y;
 
+    private int damage;
+    private int attackDistance;
+
     private int level = 1;
 
     private Image idleImage;
     private Image attackLeftImage;
     private Image attackRightImage;
+
+    private final Type type;
 
     private final int maxHealth;
     private final int maxStamina;
@@ -25,12 +31,16 @@ public abstract class Player implements IEntity {
 
     private final GameInstance gameInstance;
 
-    public Player(GameInstance gameInstance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
+        this.type = type;
 
         this.maxHealth = maxHealth;
         this.maxStamina = maxStamina;
         this.maxMana = maxMana;
+
+        this.damage = damage;
+        this.attackDistance = attackDistance;
 
         this.x = x;
         this.y = y;
@@ -51,9 +61,6 @@ public abstract class Player implements IEntity {
     public void setMana(int mana) {
         this.mana = Math.max(0, Math.min(mana, maxMana));
     }
-
-
-    public void attack();
 
     public void levelUp() {
         level++;
@@ -97,11 +104,26 @@ public abstract class Player implements IEntity {
     private void tryChangePos(int newX, int newY) {
         int field = gameInstance.getBoardField(newX, newY);
         if (field == -1) {
-
+            setHealth(health - Constants.DAMAGE_COLLIDE_WALL);
         } else if (field == 0) {
             x = newX;
             y = newY;
         }
     }
 
+    public void attack(int attackX, int attackY) {
+        int distX = x - attackX;
+        int distY = y - attackY;
+
+        if(Math.sqrt((distX * distX) + (distY * distY)) <= attackDistance) {
+            gameInstance.attackPlayerById(gameInstance.getBoardField(attackX, attackY), damage);
+        }
+    }
+
+    public enum Type {
+        WARRIOR,
+        HEALER,
+        ARCHER,
+        MAGE
+    }
 }

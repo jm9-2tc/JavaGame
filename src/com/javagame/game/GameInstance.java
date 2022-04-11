@@ -5,6 +5,7 @@ import com.javagame.game.player.Team;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class GameInstance {
     public final List<Team> teams;
@@ -39,10 +40,18 @@ public class GameInstance {
         return board[x][y];
     }
 
-    public enum Type {
-        WARRIOR,
-        HEALER,
-        ARCHER,
-        MAGE
+    public void showGameOver(String name, int x, int y) {
+        //TODO: show UI
+
+        while (true) {
+            int newX = (int) (Math.random() * width);
+            int newY = (int) (Math.random() * height);
+
+            if (board[newX][newY] == 0) {
+                board[newX][newY] = board[x][y];
+                break;
+            }
+        }
+        board[x][y] = 0;
     }
 }
