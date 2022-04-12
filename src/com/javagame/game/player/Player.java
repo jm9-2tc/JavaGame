@@ -15,13 +15,16 @@ public abstract class Player implements IEntity {
     private int y;
 
     private int damage;
-    private int attackDistance;
 
     private int level = 1;
+
+    private boolean attackDisabled = false;
 
     private Image idleImage;
     private Image attackLeftImage;
     private Image attackRightImage;
+
+    public final AttackMatrix attackMatrix;
 
     public final Type type;
     public final KeyBinds keyBinds;
@@ -32,7 +35,7 @@ public abstract class Player implements IEntity {
 
     private final GameInstance gameInstance;
 
-    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
         this.keyBinds = keyBinds;
         this.type = type;
@@ -41,8 +44,8 @@ public abstract class Player implements IEntity {
         this.maxStamina = maxStamina;
         this.maxMana = maxMana;
 
+        this.attackMatrix = attackMatrix;
         this.damage = damage;
-        this.attackDistance = attackDistance;
 
         this.x = x;
         this.y = y;
@@ -112,21 +115,74 @@ public abstract class Player implements IEntity {
     }
 
     private void tryChangePos(int newX, int newY) {
-        int field = gameInstance.getBoardField(newX, newY);
-        if (field == -1) {
-            setHealth(health - Constants.DAMAGE_COLLIDE_WALL);
-        } else if (field == 0) {
+        if (gameInstance.boardPlayers[newX][newY] == -1) {
+            onCollideWith(gameInstance.boardEnvironment[newX][newY]);
             x = newX;
             y = newY;
         }
     }
 
-    public void attack(int attackX, int attackY) {
-        int distX = x - attackX;
-        int distY = y - attackY;
+    public void attack() {
+        if (attackDisabled) return;
 
+        switch (attackMatrix) {
+            case ALL:
+                for (int a = x - 2; a <= x + 2; a++) {
+                    for (int b = y - 2; b <= y + 2; b++) {
+                        if (a == x && b == y) continue;
+                        gameInstance.tryAttackPlayer(a, b, damage);
+                    }
+                }
+                break;
+
+            case SQUARE:
+                for (int a = x - 1; a <= x + 1; a++) {
+                    for (int b = y - 1; b <= y + 1; b++) {
+                        if (a == x && b == y) continue;
+                        gameInstance.tryAttackPlayer(a, b, damage);
+                    }
+                }
+                break;
+
+            case CROSS:
+                gameInstance.tryAttackPlayer(x - 1, y, damage);
+                gameInstance.tryAttackPlayer(x + 1, y, damage);
+                gameInstance.tryAttackPlayer(x, y - 1, damage);
+                gameInstance.tryAttackPlayer(x, y + 1, damage);
+                break;
+
+            case CORNERS:
+                gameInstance.tryAttackPlayer(x - 1, y - 1, damage);
+                gameInstance.tryAttackPlayer(x + 1, y - 1, damage);
+                gameInstance.tryAttackPlayer(x - 1, y + 1, damage);
+                gameInstance.tryAttackPlayer(x + 1, y + 1, damage);
+                break;
+
+        }
+
+        /*
         if(Math.sqrt((distX * distX) + (distY * distY)) <= attackDistance) {
-            gameInstance.attackPlayerById(gameInstance.getBoardField(attackX, attackY), damage);
+            gameInstance.attackPlayerById(gameInstance.boardPlayers[attackX][attackY], damage);
+        }
+        */
+    }
+
+    public void onCollideWith(byte fieldType) {
+        // setHealth(health - Constants.DAMAGE_COLLIDE_WALL);
+
+        attackDisabled = false;
+
+        switch (fieldType) {
+            case Constants.BLOCK_SPIKY_BUSH:
+                setHealth(health - Constants.DAMAGE_COLLIDE_SPIKY_BUSH);
+                break;
+
+            case Constants.BLOCK_WATER:
+                attackDisabled = true;
+                break;
+
+            case Constants.BLOCK_HP_POTION:
+                break;
         }
     }
 

@@ -4,7 +4,7 @@ import java.awt.*;
 
 public interface IEntity {
     void levelUp();
-    void attack(int x, int y);
+    void attack();
 
     void loseHealth(int amount);
     void restoreHealth(int amount);

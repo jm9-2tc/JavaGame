@@ -10,6 +10,19 @@ public class Constants {
 
     // Game:
 
-    public static final int DAMAGE_COLLIDE_WALL = 10;
+    public static final int DAMAGE_COLLIDE_SPIKY_BUSH = 100;
+    public static final int POTION_HEALTH_RESTORED = 100;
 
+    // Environment blocks:
+    // 0 - grass
+    // 1 - wall
+    // 2 - spiky bush
+    // 3 - water
+    // 4 - HP potion
+
+    public static final byte BLOCK_GRASS = 0;
+    public static final byte BLOCK_WALL = 1;
+    public static final byte BLOCK_SPIKY_BUSH = 2;
+    public static final byte BLOCK_WATER = 3;
+    public static final byte BLOCK_HP_POTION = 4;
 }
