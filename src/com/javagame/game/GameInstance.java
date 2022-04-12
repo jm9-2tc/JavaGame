@@ -26,10 +26,6 @@ public class GameInstance {
         this.board = new int[width][height];
     }
 
-    public boolean validatePlayerSelection(int expectedTeam, int id) {
-        return players[id].team == teams[expectedTeam];
-    }
-
     public void attackPlayerById(int id, int damage) {
         Player player = players.get(id);
         if (player != null) {

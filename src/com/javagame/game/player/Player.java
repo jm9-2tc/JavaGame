@@ -23,8 +23,6 @@ public abstract class Player implements IEntity {
     private Image attackLeftImage;
     private Image attackRightImage;
 
-    public final Team team;
-
     public final Type type;
     public final KeyBinds keyBinds;
 
@@ -34,11 +32,10 @@ public abstract class Player implements IEntity {
 
     private final GameInstance gameInstance;
 
-    public Player(GameInstance gameInstance, KeyBinds keyBinds, Team team, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, int damage, int attackDistance, int x, int y, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
         this.keyBinds = keyBinds;
         this.type = type;
-        this.team = team;
 
         this.maxHealth = maxHealth;
         this.maxStamina = maxStamina;
