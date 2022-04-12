@@ -15,12 +15,18 @@ public class GamePanel extends JPanel {
     private final GameEvents gameEvents;
     private final GameInstance gameInstance;
 
+    private final int width;
+    private final int height;
+
     private int mousePosX = 0;
     private int mousePosY = 0;
 
-    public GamePanel(GameEvents gameEvents, GameInstance gameInstance) {
+    public GamePanel(GameEvents gameEvents, GameInstance gameInstance, int width, int height) {
         this.gameEvents = gameEvents;
         this.gameInstance = gameInstance;
+
+        this.width = width;
+        this.height = height;
 
         setFocusable(true);
 
@@ -33,8 +39,19 @@ public class GamePanel extends JPanel {
     }
 
     public void draw() {
+        drawEnvironment();
+
         for (Player player : gameInstance.players) {
 
+        }
+    }
+
+    private void drawEnvironment() {
+        for(int x = 0; x < gameInstance.boardEnvironment.length; x++) {
+            byte[] row = gameInstance.boardEnvironment[x];
+            for(int y = 0; y < row.length; y++) {
+
+            }
         }
     }
 
