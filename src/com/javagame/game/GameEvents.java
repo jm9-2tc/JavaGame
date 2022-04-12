@@ -21,7 +21,9 @@ public class GameEvents implements Runnable {
 
     public void handleKeyEvent(int keyCode) {
         if (!keyboardDisabled) {
-
+            for(Player player : gameInstance.players) {
+                player.handleKeyEvent(keyCode);
+            }
         }
     }
 
