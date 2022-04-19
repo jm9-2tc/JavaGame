@@ -3,6 +3,7 @@ package com.javagame.game.player;
 import com.javagame.Constants;
 import com.javagame.game.GameInstance;
 import com.javagame.game.IEntity;
+import com.javagame.game.arena.Arena;
 
 import java.awt.*;
 
@@ -14,15 +15,17 @@ public abstract class Player implements IEntity {
     private int x;
     private int y;
 
+    private State state;
+
+    private Image idleImage;
+    private Image attackLeftImage;
+    private Image attackRightImage;
+
     private int damage;
 
     private int level = 1;
 
     private boolean attackDisabled = false;
-
-    private Image idleImage;
-    private Image attackLeftImage;
-    private Image attackRightImage;
 
     public final AttackMatrix attackMatrix;
 
@@ -53,6 +56,8 @@ public abstract class Player implements IEntity {
         this.health = maxHealth;
         this.stamina = maxStamina;
         this.mana = maxMana;
+
+        this.state = State.IDLE;
     }
 
     public void setHealth(int health) {
@@ -101,6 +106,27 @@ public abstract class Player implements IEntity {
         this.attackRightImage = attackRight;
     }
 
+    public Image getTexture() {
+        switch (state) {
+            case IDLE:
+                return idleImage;
+
+            case ATTACK_LEFT:
+                return attackLeftImage;
+
+            case ATTACK_RIGHT:
+                return attackRightImage;
+        }
+        return null;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
 
     public void handleKeyEvent(int keyCode) {
         if (keyCode == keyBinds.moveUp) {
@@ -116,10 +142,35 @@ public abstract class Player implements IEntity {
 
     private void tryChangePos(int newX, int newY) {
         if (gameInstance.boardPlayers[newX][newY] == -1) {
-            onCollideWith(gameInstance.boardEnvironment[newX][newY]);
-            x = newX;
-            y = newY;
+            Arena arena = gameInstance.getArena();
+            if (!onCollideWith(arena, newX, newY)) {
+                x = newX;
+                y = newY;
+            }
         }
+    }
+
+    public boolean onCollideWith(Arena arena, int newX, int newY) {
+        attackDisabled = false;
+
+        switch (arena.blocks[newX][newY]) {
+            case Constants.BLOCK_WALL:
+                return true;
+
+            case Constants.BLOCK_SPIKY_BUSH:
+                setHealth(health - Constants.DAMAGE_COLLIDE_SPIKY_BUSH);
+                break;
+
+            case Constants.BLOCK_WATER:
+                attackDisabled = true;
+                break;
+
+            case Constants.BLOCK_HP_POTION:
+                setHealth(health + Constants.POTION_HEALTH_RESTORED);
+                arena.blocks[newX][newY] = Constants.BLOCK_GRASS;
+                break;
+        }
+        return false;
     }
 
     public void attack() {
@@ -167,25 +218,6 @@ public abstract class Player implements IEntity {
         */
     }
 
-    public void onCollideWith(byte fieldType) {
-        // setHealth(health - Constants.DAMAGE_COLLIDE_WALL);
-
-        attackDisabled = false;
-
-        switch (fieldType) {
-            case Constants.BLOCK_SPIKY_BUSH:
-                setHealth(health - Constants.DAMAGE_COLLIDE_SPIKY_BUSH);
-                break;
-
-            case Constants.BLOCK_WATER:
-                attackDisabled = true;
-                break;
-
-            case Constants.BLOCK_HP_POTION:
-                break;
-        }
-    }
-
     public static class KeyBinds {
         public final int moveUp;
         public final int moveDown;
@@ -199,6 +231,12 @@ public abstract class Player implements IEntity {
             this.moveLeft = moveLeft;
             this.moveRight = moveRight;
         }
+    }
+
+    public enum State {
+        IDLE,
+        ATTACK_LEFT,
+        ATTACK_RIGHT
     }
 
     public enum Type {

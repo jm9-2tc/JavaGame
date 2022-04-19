@@ -7,12 +7,14 @@ public class GameEvents implements Runnable {
 
     private boolean keyboardDisabled = false;
 
+    public long time = 0;
+
     public GameEvents(GameInstance gameInstance) {
         this.gameInstance = gameInstance;
     }
 
     public void play() {
-
+        time = System.currentTimeMillis();
     }
 
     public void handleClickEvent(int x, int y) {

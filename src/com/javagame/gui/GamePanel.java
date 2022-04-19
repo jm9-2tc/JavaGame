@@ -3,9 +3,11 @@ package com.javagame.gui;
 import com.javagame.Constants;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
+import com.javagame.game.arena.Arena;
 import com.javagame.game.player.Player;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -14,6 +16,8 @@ import java.awt.event.MouseEvent;
 public class GamePanel extends JPanel {
     private final GameEvents gameEvents;
     private final GameInstance gameInstance;
+
+    private final int unitSize;
 
     private final int width;
     private final int height;
@@ -25,6 +29,8 @@ public class GamePanel extends JPanel {
         this.gameEvents = gameEvents;
         this.gameInstance = gameInstance;
 
+        this.unitSize = Constants.UNIT_SIZE;
+
         this.width = width;
         this.height = height;
 
@@ -34,23 +40,33 @@ public class GamePanel extends JPanel {
         addMouseListener(new MouseListener());
     }
 
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        drawEnvironment(graphics);
+
+        for (Player player : gameInstance.players) {
+            drawPlayer(graphics, player);
+        }
+    }
+
     public void drawDialogBox(String info) {
 
     }
 
-    public void draw() {
-        drawEnvironment();
-
-        for (Player player : gameInstance.players) {
-
-        }
+    private void drawPlayer(Graphics graphics, Player player) {
+        graphics.drawImage(player.getTexture(), player.getX(), player.getY(), unitSize, unitSize, this);
     }
 
-    private void drawEnvironment() {
-        for(int x = 0; x < gameInstance.boardEnvironment.length; x++) {
-            byte[] row = gameInstance.boardEnvironment[x];
-            for(int y = 0; y < row.length; y++) {
+    private void drawEnvironment(Graphics graphics) {
+        Arena arena = gameInstance.getArena();
 
+        for(int x = 0; x < arena.blocks.length; x++) {
+            byte[] row = arena.blocks[x];
+
+            for(int y = 0; y < row.length; y++) {
+                Image blockTexture = arena.blockTextures[row[y]];
+                graphics.drawImage(blockTexture, x * unitSize, y * unitSize, unitSize, unitSize, this);
             }
         }
     }

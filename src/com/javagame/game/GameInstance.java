@@ -1,6 +1,7 @@
 package com.javagame.game;
 
 import com.javagame.Constants;
+import com.javagame.game.arena.Arena;
 import com.javagame.game.player.Player;
 
 public class GameInstance {
@@ -9,10 +10,11 @@ public class GameInstance {
     public final Player[] players;
 
     public final byte[][] boardPlayers;
-    public final byte[][] boardEnvironment;
 
     public final int width;
     public final int height;
+
+    private Arena arena;
 
     public GameInstance(GameEvents gameEvents, Player[] players, int width, int height) {
         this.gameEvents = gameEvents;
@@ -22,7 +24,6 @@ public class GameInstance {
         this.height = height;
 
         this.boardPlayers = new byte[width][height];
-        this.boardEnvironment = new byte[width][height];
     }
 
     public void tryAttackPlayer(int x, int y, int damage) {
@@ -43,11 +44,19 @@ public class GameInstance {
             int newX = (int) (Math.random() * width);
             int newY = (int) (Math.random() * height);
 
-            if (boardEnvironment[newX][newY] == Constants.BLOCK_GRASS) {
+            if (arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
                 boardPlayers[newX][newY] = boardPlayers[x][y];
                 break;
             }
         }
         boardPlayers[x][y] = -1;
+    }
+
+    public Arena getArena() {
+        return arena;
+    }
+
+    public void setArena(Arena arena) {
+        this.arena = arena;
     }
 }
