@@ -2,6 +2,7 @@ package com.javagame;
 
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
+import com.javagame.game.player.Player;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameWindow;
 
@@ -13,5 +14,8 @@ public class Main {
 
         GamePanel panel = new GamePanel(events, game, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         GameWindow window = new GameWindow(panel);
+
+        events.setup(game, panel);
+        events.run();
     }
 }

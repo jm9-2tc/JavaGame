@@ -7,8 +7,15 @@ import com.javagame.game.player.Player;
 public class GameInstance {
     public final GameEvents gameEvents;
 
-    public final Player[] players;
+    public Player[] getPlayers() {
+        return players;
+    }
 
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
+
+    public Player[] players;
     public final byte[][] boardPlayers;
 
     public final int width;
@@ -16,9 +23,8 @@ public class GameInstance {
 
     private Arena arena;
 
-    public GameInstance(GameEvents gameEvents, Player[] players, int width, int height) {
+    public GameInstance(GameEvents gameEvents, int width, int height) {
         this.gameEvents = gameEvents;
-        this.players = players;
 
         this.width = width;
         this.height = height;

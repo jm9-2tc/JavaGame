@@ -4,8 +4,10 @@ import com.javagame.Constants;
 import com.javagame.game.GameInstance;
 import com.javagame.game.IEntity;
 import com.javagame.game.arena.Arena;
+import com.javagame.resources.Resources;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public abstract class Player implements IEntity {
     private int health;
@@ -100,10 +102,10 @@ public abstract class Player implements IEntity {
         setMana(mana + amount);
     }
 
-    public void loadImages(Image idle, Image attackLeft, Image attackRight) {
-        this.idleImage = idle;
-        this.attackLeftImage = attackLeft;
-        this.attackRightImage = attackRight;
+    public void loadImages(String idle, String attackLeft, String attackRight) {
+        this.idleImage = Resources.loadTexture("player/" + idle);
+        this.attackLeftImage = Resources.loadTexture("player/" + attackLeft);
+        this.attackRightImage = Resources.loadTexture("player/" + attackRight);
     }
 
     public Image getTexture() {
@@ -126,6 +128,19 @@ public abstract class Player implements IEntity {
 
     public int getY() {
         return y;
+    }
+
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getStamina() {
+        return stamina;
+    }
+
+    public int getMana() {
+        return mana;
     }
 
     public void handleKeyEvent(int keyCode) {

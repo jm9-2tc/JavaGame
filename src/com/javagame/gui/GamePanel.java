@@ -55,7 +55,11 @@ public class GamePanel extends JPanel {
     }
 
     private void drawPlayer(Graphics graphics, Player player) {
-        graphics.drawImage(player.getTexture(), player.getX(), player.getY(), unitSize, unitSize, this);
+        int x = player.getX() * unitSize;
+        int y = player.getY() * unitSize;
+
+        graphics.drawImage(player.getTexture(), x, y, unitSize, unitSize, this);
+        graphics.drawString(String.valueOf(player.getHealth()), x, y);
     }
 
     private void drawEnvironment(Graphics graphics) {
