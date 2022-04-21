@@ -6,6 +6,8 @@ import com.javagame.game.player.Player;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameWindow;
 
+import java.awt.*;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -14,6 +16,10 @@ public class Main {
 
         GamePanel panel = new GamePanel(events, game, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
         GameWindow window = new GameWindow(panel);
+
+        Player[] players = new Player[] {
+                new Player();
+        };
 
         events.setup(game, panel);
         events.run();
