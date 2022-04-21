@@ -15,5 +15,5 @@ public interface IEntity {
     void loseMana(int amount);
     void restoreMana(int amount);
 
-    void loadImages(Image idle, Image attackLeft, Image attackRight);
+    void loadImages(String idle, String attackLeft, String attackRight);
 }

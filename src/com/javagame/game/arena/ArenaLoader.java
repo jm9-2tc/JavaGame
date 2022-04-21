@@ -54,6 +54,6 @@ public class ArenaLoader {
             case HP_POTION_COLOR:
                 return Constants.BLOCK_HP_POTION;
         }
-        return 0;
+        return Constants.BLOCK_GRASS;
     }
 }

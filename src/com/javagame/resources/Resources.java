@@ -6,7 +6,11 @@ import java.io.File;
 import java.io.IOException;
 
 public class Resources {
-    public static final String texturesPath = Resources.class.getClassLoader().getResource("/textures/").getPath();
+    public static final String texturesPath;
+
+    static {
+        texturesPath = Resources.class.getClassLoader().getResource("resources.textures").getPath();
+    }
 
     public static BufferedImage loadTexture(String filename) {
         try {

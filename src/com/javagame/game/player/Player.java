@@ -7,7 +7,6 @@ import com.javagame.game.arena.Arena;
 import com.javagame.resources.Resources;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public abstract class Player implements IEntity {
     private int health;
@@ -153,6 +152,10 @@ public abstract class Player implements IEntity {
         } else if (keyCode == keyBinds.moveRight) {
             tryChangePos(x + 1, y);
         }
+
+        if (keyCode == keyBinds.attack) {
+            attack();
+        }
     }
 
     private void tryChangePos(int newX, int newY) {
@@ -238,13 +241,14 @@ public abstract class Player implements IEntity {
         public final int moveDown;
         public final int moveLeft;
         public final int moveRight;
+        public final int attack;
 
-
-        public KeyBinds(int moveUp, int moveDown, int moveLeft, int moveRight) {
+        public KeyBinds(int moveUp, int moveDown, int moveLeft, int moveRight, int attack) {
             this.moveUp = moveUp;
             this.moveDown = moveDown;
             this.moveLeft = moveLeft;
             this.moveRight = moveRight;
+            this.attack = attack;
         }
     }
 

@@ -42,6 +42,8 @@ public class GamePanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics graphics) {
+        if (gameInstance == null) return;
+
         super.paintComponent(graphics);
         drawEnvironment(graphics);
 
