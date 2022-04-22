@@ -18,6 +18,8 @@ public class GamePanel extends JPanel {
     private final GameInstance gameInstance;
 
     private int unitSize;
+    private int marginX = 0;
+    private int marginY = 0;
 
     private int mousePosX = 0;
     private int mousePosY = 0;
@@ -29,8 +31,6 @@ public class GamePanel extends JPanel {
         this.unitSize = Constants.INITIAL_UNIT_SIZE;
 
         setBackground(Color.BLACK);
-        setAlignmentX(Component.CENTER_ALIGNMENT);
-        setAlignmentY(Component.CENTER_ALIGNMENT);
         setFocusable(true);
 
         addKeyListener(new KeyListener());
@@ -54,8 +54,8 @@ public class GamePanel extends JPanel {
     }
 
     private void drawPlayer(Graphics graphics, Player player) {
-        int x = player.getX() * unitSize;
-        int y = player.getY() * unitSize;
+        int x = marginX + player.getX() * unitSize;
+        int y = marginY + player.getY() * unitSize;
 
         graphics.drawImage(player.getTexture(), x, y, unitSize, unitSize, this);
         graphics.drawString(String.valueOf(player.getHealth()), x, y);
@@ -69,7 +69,7 @@ public class GamePanel extends JPanel {
 
             for(int y = 0; y < row.length; y++) {
                 Image blockTexture = arena.blockTextures[row[y]];
-                graphics.drawImage(blockTexture, x * unitSize, y * unitSize, unitSize, unitSize, this);
+                graphics.drawImage(blockTexture, (x * unitSize) + marginX, (y * unitSize) + marginY, unitSize, unitSize, this);
             }
         }
     }
@@ -94,6 +94,11 @@ public class GamePanel extends JPanel {
             int fieldY = (mousePosY - (mousePosY % Constants.INITIAL_UNIT_SIZE)) / Math.max(1, mousePosY);
             gameEvents.handleClickEvent(mousePosX, mousePosY);
         }
+    }
+
+    public void setMargins(int x, int y) {
+        this.marginX = x;
+        this.marginY = y;
     }
 
     public void setUnitSize(int unitSize) {
