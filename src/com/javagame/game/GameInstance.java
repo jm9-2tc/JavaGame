@@ -32,6 +32,13 @@ public class GameInstance {
         this.boardPlayers = new byte[width][height];
     }
 
+    public boolean isFieldEmpty(int x, int y) {
+        if (x < 0 || x > boardPlayers.length || y < 0 || y > boardPlayers[x].length) {
+            return false;
+        }
+        return boardPlayers[x][y] == 0;
+    }
+
     public void tryAttackPlayer(int x, int y, int damage) {
         if (x < 0 || y < 0 || x >= width || y >= height) return;
         byte playerId = boardPlayers[x][y];

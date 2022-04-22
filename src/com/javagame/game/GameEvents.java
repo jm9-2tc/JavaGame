@@ -12,8 +12,13 @@ public class GameEvents implements Runnable {
     public long time = 0;
 
     public void play() {
-        panel.repaint();
         time = System.currentTimeMillis();
+
+        while (true) {
+            panel.repaint();
+            time = System.currentTimeMillis() - time;
+            //System.out.println(time);
+        }
     }
 
 

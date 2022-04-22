@@ -17,23 +17,20 @@ public class GamePanel extends JPanel {
     private final GameEvents gameEvents;
     private final GameInstance gameInstance;
 
-    private final int unitSize;
-
-    private final int width;
-    private final int height;
+    private int unitSize;
 
     private int mousePosX = 0;
     private int mousePosY = 0;
 
-    public GamePanel(GameEvents gameEvents, GameInstance gameInstance, int width, int height) {
+    public GamePanel(GameEvents gameEvents, GameInstance gameInstance) {
         this.gameEvents = gameEvents;
         this.gameInstance = gameInstance;
 
-        this.unitSize = Constants.UNIT_SIZE;
+        this.unitSize = Constants.INITIAL_UNIT_SIZE;
 
-        this.width = width;
-        this.height = height;
-
+        setBackground(Color.BLACK);
+        setAlignmentX(Component.CENTER_ALIGNMENT);
+        setAlignmentY(Component.CENTER_ALIGNMENT);
         setFocusable(true);
 
         addKeyListener(new KeyListener());
@@ -93,9 +90,15 @@ public class GamePanel extends JPanel {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            int fieldX = (mousePosX - (mousePosX % Constants.UNIT_SIZE)) / Math.max(1, mousePosX);
-            int fieldY = (mousePosY - (mousePosY % Constants.UNIT_SIZE)) / Math.max(1, mousePosY);
+            int fieldX = (mousePosX - (mousePosX % Constants.INITIAL_UNIT_SIZE)) / Math.max(1, mousePosX);
+            int fieldY = (mousePosY - (mousePosY % Constants.INITIAL_UNIT_SIZE)) / Math.max(1, mousePosY);
             gameEvents.handleClickEvent(mousePosX, mousePosY);
         }
+    }
+
+    public void setUnitSize(int unitSize) {
+        this.unitSize = unitSize;
+        setSize(Constants.WINDOW_WIDTH * unitSize, Constants.WINDOW_HEIGHT * unitSize);
+        repaint();
     }
 }

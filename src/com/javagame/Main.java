@@ -17,13 +17,15 @@ public class Main {
         GameEvents events = new GameEvents();
         GameInstance game = new GameInstance(events, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
-        GamePanel panel = new GamePanel(events, game, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+        GamePanel panel = new GamePanel(events, game);
 
         Player.KeyBinds defaultKeys = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
 
         Player[] players = new Player[] {
                 new Warrior(game, defaultKeys, 5, 5)
         };
+
+        players[0].loadImages("archer", "archer", "archer");
 
         String[] blockTextures = {
                 "0",
@@ -39,7 +41,8 @@ public class Main {
         game.setArena(arena);
 
         events.setup(game, panel);
-        events.run();
+
+        new Thread(events).start();
 
         GameWindow window = new GameWindow(panel);
     }

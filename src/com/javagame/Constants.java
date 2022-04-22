@@ -3,10 +3,10 @@ package com.javagame;
 public class Constants {
     // GUI:
 
-    public static final int UNIT_SIZE = 16;
+    public static final int INITIAL_UNIT_SIZE = 40;
 
-    public static final int WINDOW_WIDTH = 40;
-    public static final int WINDOW_HEIGHT = 30;
+    public static final int WINDOW_WIDTH = 39;
+    public static final int WINDOW_HEIGHT = 25;
 
     // Game:
 

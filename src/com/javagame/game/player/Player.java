@@ -159,7 +159,7 @@ public abstract class Player implements IEntity {
     }
 
     private void tryChangePos(int newX, int newY) {
-        if (gameInstance.boardPlayers[newX][newY] == -1) {
+        if (gameInstance.boardPlayers[newX][newY] == 0) {
             Arena arena = gameInstance.getArena();
             if (!onCollideWith(arena, newX, newY)) {
                 x = newX;

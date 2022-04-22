@@ -1,17 +1,32 @@
 package com.javagame.gui;
 
 import com.javagame.Constants;
+import com.javagame.game.player.Player;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameWindow extends JFrame {
-
     public GameWindow(GamePanel panel) {
-        int height = Constants.WINDOW_HEIGHT * Constants.UNIT_SIZE;
-        int width = Constants.WINDOW_WIDTH * Constants.UNIT_SIZE;
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(true);
 
-        setSize(width, height);
+        Dimension size = getSize();
+
+        int unitSize = size.width / Constants.WINDOW_WIDTH;
+
+        if (Constants.WINDOW_HEIGHT * unitSize > size.height) {
+            unitSize = size.height / Constants.WINDOW_HEIGHT;
+        }
+
+        unitSize = 30;
+
+        panel.setUnitSize(unitSize);
+
         add(panel);
+
+        repaint();
+
         setVisible(true);
     }
 }
