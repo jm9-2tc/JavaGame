@@ -3,21 +3,20 @@ package com.javagame.game;
 import com.javagame.game.player.Player;
 import com.javagame.gui.GameScreen;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class GameEvents implements Runnable {
     private GameInstance gameInstance;
     private GameScreen panel;
 
     private boolean keyboardDisabled = false;
 
-    public long time = 0;
+    private final AtomicLong frame = new AtomicLong(0);
 
     public void play() {
-        time = System.currentTimeMillis();
-
         while (true) {
             panel.repaint();
-            time = System.currentTimeMillis() - time;
-            //System.out.println(time);
+            frame.incrementAndGet();
         }
     }
 
@@ -42,6 +41,10 @@ public class GameEvents implements Runnable {
 
     public synchronized void disableKeyboard(boolean disable) {
         keyboardDisabled = disable;
+    }
+
+    public synchronized long getFrame() {
+        return frame.get();
     }
 
     @Override

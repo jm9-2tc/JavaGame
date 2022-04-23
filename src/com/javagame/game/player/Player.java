@@ -9,12 +9,27 @@ import com.javagame.resources.Resources;
 import java.awt.*;
 
 public abstract class Player implements IEntity {
+    public final AttackMatrix attackMatrix;
+
+    public final Type type;
+    public final KeyBinds keyBinds;
+
+    public final int maxHealth;
+    public final int maxStamina;
+    public final int maxMana;
+
+    public final int stepInterval;
+
+    private final GameInstance gameInstance;
+
     private int health;
     private int stamina;
     private int mana;
 
     private int x;
     private int y;
+
+    private long lastStep = 0;
 
     private State state;
 
@@ -28,18 +43,7 @@ public abstract class Player implements IEntity {
 
     private boolean attackDisabled = false;
 
-    public final AttackMatrix attackMatrix;
-
-    public final Type type;
-    public final KeyBinds keyBinds;
-
-    public final int maxHealth;
-    public final int maxStamina;
-    public final int maxMana;
-
-    private final GameInstance gameInstance;
-
-    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int maxHealth, int maxStamina, int maxMana) {
+    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
         this.keyBinds = keyBinds;
         this.type = type;
@@ -53,6 +57,8 @@ public abstract class Player implements IEntity {
 
         this.x = x;
         this.y = y;
+
+        this.stepInterval = stepInterval;
 
         this.health = maxHealth;
         this.stamina = maxStamina;
@@ -159,7 +165,17 @@ public abstract class Player implements IEntity {
     }
 
     private void tryChangePos(int newX, int newY) {
-        if (gameInstance.boardPlayers[newX][newY] == 0) {
+        long frame = gameInstance.gameEvents.getFrame();
+
+        if (lastStep + stepInterval > frame) {
+            return;
+        }
+
+        lastStep = frame;
+
+        //System.out.println(frame);
+
+        if (gameInstance.isFieldEmpty(newX, newY)) {
             Arena arena = gameInstance.getArena();
             if (!onCollideWith(arena, newX, newY)) {
                 x = newX;

@@ -7,14 +7,16 @@ public class GameInterface extends JPanel {
     private final GridBagConstraints gbc;
 
     public GameInterface() {
-        //setPreferredSize(window.getSize());
         setLayout(new GridBagLayout());
+        setOpaque(false);
+
         gbc = new GridBagConstraints();
+        gbc.insets = new Insets(240, 0, 0, 0);
     }
 
     public void setPanel(GamePanel panel) {
         removeAll();
-        add(panel);
-        gbc.insets = new Insets(128, 0, 0, 0);
+        add(panel, gbc);
+        getParent().revalidate();
     }
 }

@@ -16,20 +16,15 @@ public class GameInstance {
     }
 
     public Player[] players;
-    public final byte[][] boardPlayers;
+    public byte[][] boardPlayers;
 
-    public final int width;
-    public final int height;
+    public int width = 0;
+    public int height = 0;
 
     private Arena arena;
 
-    public GameInstance(GameEvents gameEvents, int width, int height) {
+    public GameInstance(GameEvents gameEvents) {
         this.gameEvents = gameEvents;
-
-        this.width = width;
-        this.height = height;
-
-        this.boardPlayers = new byte[width][height];
     }
 
     public boolean isFieldEmpty(int x, int y) {
@@ -71,5 +66,6 @@ public class GameInstance {
 
     public void setArena(Arena arena) {
         this.arena = arena;
+        this.boardPlayers = new byte[arena.width][arena.height];
     }
 }

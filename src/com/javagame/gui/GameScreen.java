@@ -14,6 +14,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class GameScreen extends JPanel {
+    private final GameWindow gameWindow;
     private final GameEvents gameEvents;
     private final GameInstance gameInstance;
 
@@ -24,7 +25,8 @@ public class GameScreen extends JPanel {
     private int mousePosX = 0;
     private int mousePosY = 0;
 
-    public GameScreen(GameEvents gameEvents, GameInstance gameInstance) {
+    public GameScreen(GameWindow gameWindow, GameEvents gameEvents, GameInstance gameInstance) {
+        this.gameWindow = gameWindow;
         this.gameEvents = gameEvents;
         this.gameInstance = gameInstance;
 
@@ -100,14 +102,23 @@ public class GameScreen extends JPanel {
         add(gameInterface);
     }
 
-    public void setMargins(int x, int y) {
-        this.marginX = x;
-        this.marginY = y;
-    }
+    public void recenter() {
+        Dimension size = gameWindow.getSize();
+        Arena arena = gameInstance.getArena();
 
-    public void setUnitSize(int unitSize) {
+        int unitSize = size.width / arena.width;
+
+        if (arena.height * unitSize > size.height) {
+            unitSize = size.height / arena.height;
+        }
+
+        int marginX = (size.width - (arena.width * unitSize)) / 2;
+        int marginY = (size.height - (arena.height * unitSize)) / 2;
+
+        this.marginX = marginX;
+        this.marginY = marginY;
         this.unitSize = unitSize;
-        setSize(Constants.WINDOW_WIDTH * unitSize, Constants.WINDOW_HEIGHT * unitSize);
+
         repaint();
     }
 }

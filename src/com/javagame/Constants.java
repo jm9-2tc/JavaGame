@@ -5,10 +5,10 @@ public class Constants {
 
     public static final int INITIAL_UNIT_SIZE = 40;
 
-    public static final int WINDOW_WIDTH = 40;
-    public static final int WINDOW_HEIGHT = 25;
-
     // Game:
+
+    public static final int ARENAS_COUNT = 6;
+
 
     public static final int DAMAGE_COLLIDE_SPIKY_BUSH = 100;
     public static final int POTION_HEALTH_RESTORED = 100;

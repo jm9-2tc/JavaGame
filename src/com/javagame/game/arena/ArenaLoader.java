@@ -10,7 +10,7 @@ public class ArenaLoader {
 
     private static final int GRASS_COLOR = 0xFF00FF00;
     private static final int WALL_COLOR = 0xFFC8C8C8;
-    private static final int SPIKY_BUSH_COLOR = 0xFF008800;
+    private static final int SPIKY_BUSH_COLOR = 0xFFFF0000;
     private static final int WATER_COLOR = 0xFF0000FF;
     private static final int HP_POTION_COLOR = 0xFFFF00FF;
 
@@ -34,7 +34,7 @@ public class ArenaLoader {
             textures[index] = Resources.loadTexture("block/" + texturesPath[index]);
         }
 
-        return new Arena(textures, map);
+        return new Arena(textures, map, width, height);
     }
 
     private static byte getBlockByColor(int color) {
