@@ -37,14 +37,20 @@ public class GameMechanics {
         Color textColor = new Color(225, 225, 225, 255);
 
         // Initialize arenas:
-
+        for(int i=0; i<Constants.ARENAS_COUNT; i++){
+            String mapName = Constants.ARENAS_FILES[i].getName().substring(0,Constants.ARENAS_FILES[i].getName().length()-4);
+            //System.out.println(mapName);
+            arenas.first[i] = mapName.replace('-',' ');
+            arenas.second[i] = mapName;
+        }
+            /*
         arenas.first[0] = "Backrooms"; arenas.second[0] = "backrooms";
         arenas.first[1] = "Castle"; arenas.second[1] = "castle";
         arenas.first[2] = "Great Labyrinth"; arenas.second[2] = "great-labyrinth";
         arenas.first[3] = "Lake"; arenas.second[3] = "lake";
-        arenas.first[4] = "Small Town"; arenas.second[4] = "small-town";
-        arenas.first[5] = "The T"; arenas.second[5] = "t";
-
+        //arenas.first[4] = "Small Town"; arenas.second[4] = "small-town";
+        arenas.first[4] = "The T"; arenas.second[4] = "t";
+*/
         // Initialize panels:
 
         welcomePanel = new GamePanel(480, 360, textColor, btnColor, bgColor);
