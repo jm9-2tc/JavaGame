@@ -1,109 +1,81 @@
 package com.javagame.gui;
 
-import com.javagame.Constants;
-import com.javagame.game.GameEvents;
-import com.javagame.game.GameInstance;
-import com.javagame.game.arena.Arena;
-import com.javagame.game.player.Player;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.util.function.Supplier;
 
 public class GamePanel extends JPanel {
-    private final GameEvents gameEvents;
-    private final GameInstance gameInstance;
+    private final Color textColor;
+    private final Color buttonsColor;
 
-    private int unitSize;
-    private int marginX = 0;
-    private int marginY = 0;
+    private final GridBagConstraints gbc;
 
-    private int mousePosX = 0;
-    private int mousePosY = 0;
+    public GamePanel(int width, int height, Color textColor, Color buttonsColor, Color backgroundColor) {
+        setPreferredSize(new Dimension(width, height));
+        setBackground(backgroundColor);
 
-    public GamePanel(GameEvents gameEvents, GameInstance gameInstance) {
-        this.gameEvents = gameEvents;
-        this.gameInstance = gameInstance;
+        setLayout(new GridBagLayout());
 
-        this.unitSize = Constants.INITIAL_UNIT_SIZE;
+        gbc = new GridBagConstraints();
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
 
-        setBackground(Color.BLACK);
-        setFocusable(true);
-
-        addKeyListener(new KeyListener());
-        addMouseListener(new MouseListener());
+        this.buttonsColor = buttonsColor;
+        this.textColor = textColor;
     }
 
-    @Override
-    protected void paintComponent(Graphics graphics) {
-        if (gameInstance == null) return;
+    public void addLabel(GameLabel gameLabel) {
+        JLabel label = new JLabel(gameLabel.text);
+        label.setFont(new Font("consolas", Font.PLAIN, gameLabel.fontSize));
 
-        super.paintComponent(graphics);
-        drawEnvironment(graphics);
+        label.setForeground(textColor);
 
-        for (Player player : gameInstance.players) {
-            drawPlayer(graphics, player);
+        add(label, gbc);
+        gbc.insets = new Insets(40, 0, 0, 0);
+    }
+
+    public void addButton(GameButton gameButton) {
+        JButton button = new JButton(gameButton.text);
+        button.setMinimumSize(gameButton.size);
+        button.setFont(new Font("consolas", Font.PLAIN, gameButton.fontSize));
+        button.addActionListener(e -> gameButton.onClick.get());
+        button.setBounds(100, 100, 120, 60);
+
+        button.setBackground(buttonsColor);
+        button.setForeground(textColor);
+
+        add(button, gbc);
+        gbc.insets = new Insets(30, 0, 0, 0);
+    }
+
+    public static class GameLabel {
+        public final String text;
+        public final int fontSize;
+
+        public GameLabel(String text) {
+            this(text, 16);
+        }
+
+        public GameLabel(String text, int fontSize) {
+            this.text = text;
+            this.fontSize = fontSize;
         }
     }
 
-    public void drawDialogBox(String info) {
+    public static class GameButton {
+        public final int fontSize;
+        public final Dimension size;
+        public final String text;
+        public final Supplier<?> onClick;
 
-    }
-
-    private void drawPlayer(Graphics graphics, Player player) {
-        int x = marginX + player.getX() * unitSize;
-        int y = marginY + player.getY() * unitSize;
-
-        graphics.drawImage(player.getTexture(), x, y, unitSize, unitSize, this);
-        graphics.drawString(String.valueOf(player.getHealth()), x, y);
-    }
-
-    private void drawEnvironment(Graphics graphics) {
-        Arena arena = gameInstance.getArena();
-
-        for(int x = 0; x < arena.blocks.length; x++) {
-            byte[] row = arena.blocks[x];
-
-            for(int y = 0; y < row.length; y++) {
-                Image blockTexture = arena.blockTextures[row[y]];
-                graphics.drawImage(blockTexture, (x * unitSize) + marginX, (y * unitSize) + marginY, unitSize, unitSize, this);
-            }
-        }
-    }
-
-    public class KeyListener extends KeyAdapter {
-        @Override
-        public void keyPressed(KeyEvent e) {
-            gameEvents.handleKeyEvent(e.getKeyCode());
-        }
-    }
-
-    public class MouseListener extends MouseAdapter {
-        @Override
-        public void mouseMoved(MouseEvent e) {
-            mousePosX = e.getX();
-            mousePosY = e.getY();
+        public <T> GameButton(Dimension size, String text, Supplier<T> onClick) {
+            this(size, text, 16, onClick);
         }
 
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            int fieldX = (mousePosX - (mousePosX % Constants.INITIAL_UNIT_SIZE)) / Math.max(1, mousePosX);
-            int fieldY = (mousePosY - (mousePosY % Constants.INITIAL_UNIT_SIZE)) / Math.max(1, mousePosY);
-            gameEvents.handleClickEvent(mousePosX, mousePosY);
+        public <T> GameButton(Dimension size, String text, int fontSize, Supplier<T> onClick) {
+            this.size = size;
+            this.fontSize = fontSize;
+            this.text = text;
+            this.onClick = onClick;
         }
-    }
-
-    public void setMargins(int x, int y) {
-        this.marginX = x;
-        this.marginY = y;
-    }
-
-    public void setUnitSize(int unitSize) {
-        this.unitSize = unitSize;
-        setSize(Constants.WINDOW_WIDTH * unitSize, Constants.WINDOW_HEIGHT * unitSize);
-        repaint();
     }
 }

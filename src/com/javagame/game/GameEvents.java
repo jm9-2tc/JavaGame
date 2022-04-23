@@ -1,11 +1,11 @@
 package com.javagame.game;
 
 import com.javagame.game.player.Player;
-import com.javagame.gui.GamePanel;
+import com.javagame.gui.GameScreen;
 
 public class GameEvents implements Runnable {
     private GameInstance gameInstance;
-    private GamePanel panel;
+    private GameScreen panel;
 
     private boolean keyboardDisabled = false;
 
@@ -22,7 +22,7 @@ public class GameEvents implements Runnable {
     }
 
 
-    public void setup(GameInstance gameInstance, GamePanel panel) {
+    public void setup(GameInstance gameInstance, GameScreen panel) {
         this.gameInstance = gameInstance;
         this.panel = panel;
     }

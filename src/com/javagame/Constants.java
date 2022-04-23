@@ -5,7 +5,7 @@ public class Constants {
 
     public static final int INITIAL_UNIT_SIZE = 40;
 
-    public static final int WINDOW_WIDTH = 49;
+    public static final int WINDOW_WIDTH = 40;
     public static final int WINDOW_HEIGHT = 25;
 
     // Game:

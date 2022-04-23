@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 public class ArenaLoader {
 
     private static final int GRASS_COLOR = 0xFF00FF00;
-    private static final int WALL_COLOR = 0xFF888888;
+    private static final int WALL_COLOR = 0xFFC8C8C8;
     private static final int SPIKY_BUSH_COLOR = 0xFF008800;
     private static final int WATER_COLOR = 0xFF0000FF;
     private static final int HP_POTION_COLOR = 0xFFFF00FF;

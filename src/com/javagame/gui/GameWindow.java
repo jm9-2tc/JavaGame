@@ -1,13 +1,12 @@
 package com.javagame.gui;
 
 import com.javagame.Constants;
-import com.javagame.game.player.Player;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class GameWindow extends JFrame {
-    public GameWindow(GamePanel panel) {
+    public GameWindow(GameScreen screen) {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
         setVisible(true);
@@ -23,9 +22,9 @@ public class GameWindow extends JFrame {
         int marginX = (size.width - (Constants.WINDOW_WIDTH * unitSize)) / 2;
         int marginY = (size.height - (Constants.WINDOW_HEIGHT * unitSize)) / 2;
 
-        panel.setMargins(marginX, marginY);
-        panel.setUnitSize(unitSize);
+        screen.setMargins(marginX, marginY);
+        screen.setUnitSize(unitSize);
 
-        add(panel);
+        add(screen);
     }
 }
