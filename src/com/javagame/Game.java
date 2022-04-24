@@ -31,9 +31,7 @@ public class Game {
                 new Knight(gameInstance, defaultKeys, 5, 5)
         };
 
-        players[0].loadImages("archer", "archer", "archer");
-
-
+        players[0].loadTexture("knight.png");
 
         //Arena arena = ArenaLoader.load("great-labyrinth", blockTextures);
 

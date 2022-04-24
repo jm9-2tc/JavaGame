@@ -15,7 +15,7 @@ public class ArenaLoader {
     private static final int HP_POTION_COLOR = 0xFFFF00FF;
 
     public static Arena load(String filename, String[] texturesPath) {
-        BufferedImage mapFile = Resources.loadTexture("map/" + filename);
+        BufferedImage mapFile = Resources.loadTexture(Resources.mapsPath + filename);
 
         int width = mapFile.getWidth();
         int height = mapFile.getHeight();
@@ -31,7 +31,7 @@ public class ArenaLoader {
         Image[] textures = new Image[texturesPath.length];
 
         for(byte index = 0; index < texturesPath.length; index++) {
-            textures[index] = Resources.loadTexture("block/" + texturesPath[index]);
+            textures[index] = Resources.loadTexture(Resources.blockTexturesPath + texturesPath[index]);
         }
 
         return new Arena(textures, map, width, height);

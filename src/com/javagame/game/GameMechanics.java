@@ -2,6 +2,8 @@ package com.javagame.game;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
+import java.util.Locale;
 
 import com.javagame.Constants;
 import com.javagame.Game;
@@ -9,6 +11,7 @@ import com.javagame.game.arena.ArenaLoader;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameScreen;
+import com.javagame.resources.Resources;
 import com.javagame.types.Pair;
 
 import static com.javagame.gui.GamePanel.*;
@@ -24,11 +27,11 @@ public class GameMechanics {
     private static final GamePanel playersCreatorPanel;
 
     private static final String[] blockTextures = {
-        "0",
-        "1",
-        "2",
-        "3",
-        "4"
+        "0.png",
+        "1.png",
+        "2.png",
+        "3.png",
+        "4.png"
     };
 
     static {
@@ -37,20 +40,19 @@ public class GameMechanics {
         Color textColor = new Color(225, 225, 225, 255);
 
         // Initialize arenas:
-        for(int i=0; i<Constants.ARENAS_COUNT; i++){
-            String mapName = Constants.ARENAS_FILES[i].getName().substring(0,Constants.ARENAS_FILES[i].getName().length()-4);
-            //System.out.println(mapName);
-            arenas.first[i] = mapName.replace('-',' ');
-            arenas.second[i] = mapName;
+
+        String[] arenaMaps = new File(Resources.texturesPath + Resources.mapsPath).list();
+
+        if (arenaMaps != null) {
+            int index  = 0;
+
+            for (String arenaMap : arenaMaps) {
+                arenas.first[index] = prepareName(arenaMap);
+                arenas.second[index] = arenaMap;
+                index++;
+            }
         }
-            /*
-        arenas.first[0] = "Backrooms"; arenas.second[0] = "backrooms";
-        arenas.first[1] = "Castle"; arenas.second[1] = "castle";
-        arenas.first[2] = "Great Labyrinth"; arenas.second[2] = "great-labyrinth";
-        arenas.first[3] = "Lake"; arenas.second[3] = "lake";
-        //arenas.first[4] = "Small Town"; arenas.second[4] = "small-town";
-        arenas.first[4] = "The T"; arenas.second[4] = "t";
-*/
+
         // Initialize panels:
 
         welcomePanel = new GamePanel(480, 360, textColor, btnColor, bgColor);
@@ -102,5 +104,22 @@ public class GameMechanics {
     private void loadArena(int number) {
         gameInstance.setArena(ArenaLoader.load(arenas.second[number], blockTextures));
         gameScreen.recenter();
+    }
+
+    private static String prepareName(String rawName) {
+        String[] words = rawName.split("[.]")[0].replaceAll("[-_]", " ").split(" ");
+        StringBuilder resultBuilder = new StringBuilder();
+
+        for (String word : words) {
+            resultBuilder.append(word.substring(0, 1).toUpperCase(Locale.ROOT)).append(word.substring(1)).append(' ');
+        }
+
+        String result = resultBuilder.substring(0, resultBuilder.length() - 1);
+
+        if (result.length() == 1) {
+            result = "The " + result;
+        }
+
+        return result;
     }
 }

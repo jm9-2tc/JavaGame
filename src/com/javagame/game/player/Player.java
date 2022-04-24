@@ -8,7 +8,7 @@ import com.javagame.resources.Resources;
 
 import java.awt.*;
 
-public abstract class Player implements IEntity {
+public class Player implements IEntity {
     public final AttackMatrix attackMatrix;
 
     public final Type type;
@@ -33,9 +33,7 @@ public abstract class Player implements IEntity {
 
     private State state;
 
-    private Image idleImage;
-    private Image attackLeftImage;
-    private Image attackRightImage;
+    private Image texture;
 
     private int damage;
 
@@ -107,24 +105,12 @@ public abstract class Player implements IEntity {
         setMana(mana + amount);
     }
 
-    public void loadImages(String idle, String attackLeft, String attackRight) {
-        this.idleImage = Resources.loadTexture("player/" + idle);
-        this.attackLeftImage = Resources.loadTexture("player/" + attackLeft);
-        this.attackRightImage = Resources.loadTexture("player/" + attackRight);
+    public void loadTexture(String filename) {
+        this.texture = Resources.loadTexture(Resources.playerTexturesPath + filename);
     }
 
     public Image getTexture() {
-        switch (state) {
-            case IDLE:
-                return idleImage;
-
-            case ATTACK_LEFT:
-                return attackLeftImage;
-
-            case ATTACK_RIGHT:
-                return attackRightImage;
-        }
-        return null;
+        return texture;
     }
 
     public int getX() {
@@ -244,12 +230,6 @@ public abstract class Player implements IEntity {
                 break;
 
         }
-
-        /*
-        if(Math.sqrt((distX * distX) + (distY * distY)) <= attackDistance) {
-            gameInstance.attackPlayerById(gameInstance.boardPlayers[attackX][attackY], damage);
-        }
-        */
     }
 
     public static class KeyBinds {
