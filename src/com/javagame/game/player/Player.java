@@ -25,7 +25,6 @@ public class Player implements IEntity {
     private final int damage;
     public final int stepInterval;
 
-
     private int health;
     private int stamina;
     private int mana;

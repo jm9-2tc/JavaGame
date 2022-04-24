@@ -5,4 +5,5 @@ public enum AttackMatrix {
     SQUARE,
     CROSS,
     CORNERS,
+    SAMOJEB
 }
