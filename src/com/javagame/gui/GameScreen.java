@@ -51,16 +51,12 @@ public class GameScreen extends JPanel {
         }
     }
 
-    public void drawDialogBox(String info) {
-
-    }
-
     private void drawPlayer(Graphics graphics, Player player) {
         int x = marginX + player.getX() * unitSize;
         int y = marginY + player.getY() * unitSize;
 
-        graphics.drawImage(player.getTexture(), x, y, unitSize, unitSize, this);
-        graphics.drawString(String.valueOf(player.getHealth()), x, y);
+        graphics.drawImage(player.texture, x, y, unitSize, unitSize, this);
+        graphics.drawString(String.valueOf(player.getHealth()), x, y + 16);
     }
 
     private void drawEnvironment(Graphics graphics) {

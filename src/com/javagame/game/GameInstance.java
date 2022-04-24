@@ -21,14 +21,17 @@ public class GameInstance {
     public int width = 0;
     public int height = 0;
 
+    public boolean ready = false;
+
     private Arena arena;
 
     public GameInstance(GameEvents gameEvents) {
         this.gameEvents = gameEvents;
+        this.players = new Player[0];
     }
 
     public boolean isFieldEmpty(int x, int y) {
-        if (x < 0 || x > boardPlayers.length || y < 0 || y > boardPlayers[x].length) {
+        if (x < 0 || x >= boardPlayers.length || y < 0 || y >= boardPlayers[x].length) {
             return false;
         }
         return boardPlayers[x][y] == 0;

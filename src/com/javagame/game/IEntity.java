@@ -13,5 +13,5 @@ public interface IEntity {
     void loseMana(int amount);
     void restoreMana(int amount);
 
-    void loadTexture(String filename);
+    //void loadTexture(String filename);
 }

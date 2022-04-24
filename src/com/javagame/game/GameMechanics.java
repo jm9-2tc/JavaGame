@@ -1,13 +1,16 @@
 package com.javagame.game;
 
-import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
-import com.javagame.Constants;
 import com.javagame.Game;
 import com.javagame.game.arena.ArenaLoader;
+import com.javagame.game.player.Player;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameScreen;
@@ -21,18 +24,26 @@ public class GameMechanics {
     private final GameScreen gameScreen;
     private final GameInterface gameInterface;
 
-    private static final Pair<String[], String[]> arenas = new Pair<>(new String[Constants.ARENAS_COUNT], new String[Constants.ARENAS_COUNT]);
+    private final List<PlayerData> players = new ArrayList<>();
 
     private static final GamePanel welcomePanel;
     private static final GamePanel playersCreatorPanel;
 
-    private static final String[] blockTextures = {
-        "0.png",
-        "1.png",
-        "2.png",
-        "3.png",
-        "4.png"
-    };
+    private static final String[] blocksTextures;
+    private static final Pair<String[], String[]> arenas = new Pair<>(null, null);
+    private static final Pair<String[], Player.KeyBinds[]> keyBindsPresets = new Pair<>(null, null);
+    private static final PlayerPreset[] playerPresets;
+
+
+    private GameComboBox playerSelectCombo;
+    private GameComboBox playerClassCombo;
+    private GameComboBox playerKeyBindsCombo;
+    private GameButton playerUpdateBtn;
+    private GameButton playerRemoveBtn;
+    private GameInput playerNameInput;
+    private GameLabel playerCreatorWarningLabel;
+
+    private int selectedPlayer = -1;
 
     static {
         Color bgColor = new Color(48, 48, 48, 192);
@@ -46,6 +57,9 @@ public class GameMechanics {
         if (arenaMaps != null) {
             int index  = 0;
 
+            arenas.first = new String[arenaMaps.length];
+            arenas.second = new String[arenaMaps.length];
+
             for (String arenaMap : arenaMaps) {
                 arenas.first[index] = prepareName(arenaMap);
                 arenas.second[index] = arenaMap;
@@ -53,10 +67,44 @@ public class GameMechanics {
             }
         }
 
+        // Initialize blocks textures:
+
+        String[] blocksTexturesFiles = new File(Resources.texturesPath + Resources.blockTexturesPath).list();
+
+        if (blocksTexturesFiles != null) {
+            int index = 0;
+
+            blocksTextures = new String[blocksTexturesFiles.length];
+
+            for (String blockTextureFile : blocksTexturesFiles) {
+                blocksTextures[index] = blockTextureFile;
+                index++;
+            }
+        } else {
+            blocksTextures = null;
+        }
+
+        // Initialize player presets:
+
+        playerPresets = new PlayerPreset[1];
+
+        playerPresets[0] = new PlayerPreset("Knight", Resources.playerTexturesPath + "knight.png", Player.Type.KNIGHT);
+
+        // Initialize key binds:
+
+        keyBindsPresets.first = new String[2];
+        keyBindsPresets.second = new Player.KeyBinds[2];
+
+        keyBindsPresets.first[0] = "W S A D Space";
+        keyBindsPresets.second[0] = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
+
+        keyBindsPresets.first[1] = "↑ ↓ ← → Enter";
+        keyBindsPresets.second[1] = new Player.KeyBinds(KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
+
         // Initialize panels:
 
-        welcomePanel = new GamePanel(480, 360, textColor, btnColor, bgColor);
-        playersCreatorPanel = new GamePanel(720, 640, textColor, btnColor, bgColor);
+        welcomePanel = new GamePanel(480, 420, textColor, btnColor, bgColor);
+        playersCreatorPanel = new GamePanel(720, 800, textColor, btnColor, bgColor);
     }
 
     public GameMechanics(GameInstance gameInstance, GameScreen gameScreen, GameInterface game) {
@@ -66,25 +114,53 @@ public class GameMechanics {
     }
 
     public void setup() {
-        Dimension btnSize = new Dimension(480, 120);
+        Dimension btnSize = new Dimension(200, 40);
 
         // Welcome panel:
 
         Runnable onclick = () -> System.out.println("clicked");
 
-        welcomePanel.addLabel(new GameLabel("Welcome", 48));
-        welcomePanel.addButton(new GameButton(btnSize, "create players", this::showPlayersCreatorPanel));
+        welcomePanel.addComponent(new GameLabel("Welcome", 48));
+        welcomePanel.addComponent(new GameButton(btnSize, "create players", this::showPlayersCreatorPanel));
 
-        welcomePanel.addLabel(new GameLabel("select arena:"));
-        welcomePanel.addComboBox(new GameComboBox(btnSize, arenas.first, this::loadArena));
+        welcomePanel.addComponent(new GameLabel("select arena:"));
+        welcomePanel.addComponent(new GameComboBox(btnSize, arenas.first, this::loadArena));
 
-        welcomePanel.addButton(new GameButton(btnSize, "start", onclick));
+        welcomePanel.addComponent(new GameButton(btnSize, "start", onclick));
 
         // Players creator panel:
 
-        playersCreatorPanel.addLabel(new GameLabel("Create players", 48));
+        playerSelectCombo = new GameComboBox(btnSize, new String[0], this::selectPlayer);
+        playerClassCombo = new GameComboBox(btnSize, getPlayersClasses(), (arg) -> {});
+        playerKeyBindsCombo = new GameComboBox(btnSize, keyBindsPresets.first, (arg) -> {});
 
-        playersCreatorPanel.addButton(new GameButton(btnSize, "apply", Game.mechanics::showWelcomePanel));
+        playerUpdateBtn = new GameButton(btnSize, "update player", Game.mechanics::updatePlayer);
+        playerRemoveBtn = new GameButton(btnSize, "remove player", Game.mechanics::removePlayer);
+
+        playerNameInput = new GameInput(btnSize);
+        playerCreatorWarningLabel = new GameLabel("");
+
+        playersCreatorPanel.addComponent(new GameLabel("Create players", 48));
+
+        playersCreatorPanel.addComponent(new GameLabel("select player:"));
+        playersCreatorPanel.addComponent(playerSelectCombo);
+
+        playersCreatorPanel.addComponent(new GameLabel("select player class:"));
+        playersCreatorPanel.addComponent(playerClassCombo);
+
+        playersCreatorPanel.addComponent(new GameLabel("select player key binds:"));
+        playersCreatorPanel.addComponent(playerKeyBindsCombo);
+
+        playersCreatorPanel.addComponent(new GameLabel("insert player name:"));
+        playersCreatorPanel.addComponent(playerNameInput);
+
+        playersCreatorPanel.addComponent(playerCreatorWarningLabel);
+
+        playersCreatorPanel.addComponent(new GameButton(btnSize, "add player", Game.mechanics::addPlayer));
+        playersCreatorPanel.addComponent(playerUpdateBtn);
+        playersCreatorPanel.addComponent(playerRemoveBtn);
+
+        playersCreatorPanel.addComponent(new GameButton(btnSize, "accept all", Game.mechanics::showWelcomePanel));
 
         loadArena(0);
     }
@@ -93,18 +169,139 @@ public class GameMechanics {
         showWelcomePanel();
     }
 
+    // welcome panel methods:
+
     private void showWelcomePanel() {
         gameInterface.setPanel(welcomePanel);
     }
 
-    private void showPlayersCreatorPanel() {
-        gameInterface.setPanel(playersCreatorPanel);
-    }
-
     private void loadArena(int number) {
-        gameInstance.setArena(ArenaLoader.load(arenas.second[number], blockTextures));
+        gameInstance.setArena(ArenaLoader.load(arenas.second[number], blocksTextures));
         gameScreen.recenter();
     }
+
+    // players creator panel methods:
+
+    private void showPlayersCreatorPanel() {
+        gameInterface.setPanel(playersCreatorPanel);
+        refreshPlayersCombo();
+    }
+
+    private void refreshPlayersCombo() {
+        String[] playerNames = getPlayersNames();
+        boolean anyPlayers = playerNames.length > 0;
+
+        playerSelectCombo.setOptions(playerNames);
+
+        playerSelectCombo.setEnabled(anyPlayers);
+        playerUpdateBtn.setEnabled(anyPlayers);
+        playerRemoveBtn.setEnabled(anyPlayers);
+
+        playerSelectCombo.refresh();
+        playerUpdateBtn.refresh();
+        playerRemoveBtn.refresh();
+    }
+
+    private void selectPlayer(int index) {
+        if (index < 0) return;
+
+        selectedPlayer = index;
+        PlayerData currentPlayer = players.get(index);
+
+        playerNameInput.setValue(currentPlayer.name);
+        playerClassCombo.setSelectedIndex(getPresetIndex(currentPlayer.playerClass));
+        playerKeyBindsCombo.setSelectedIndex(getKeyBindsIndex(currentPlayer.keyBinds));
+
+        playerNameInput.refresh();
+        playerClassCombo.refresh();
+    }
+
+    private int getPresetIndex(Player.Type playerClass) {
+        for (int index = 0; index < playerPresets.length; index++) {
+            if (playerPresets[index].playerClass == playerClass) {
+                return index;
+            }
+        }
+        return 0;
+    }
+
+    private int getKeyBindsIndex(Player.KeyBinds keyBinds) {
+        for (int index = 0; index < keyBindsPresets.second.length; index++) {
+            if (keyBindsPresets.second[index] == keyBinds) {
+                return index;
+            }
+        }
+        return 0;
+    }
+
+    private String[] getPlayersNames() {
+        String[] result = new String[players.size()];
+        int index = 0;
+
+        for (PlayerData player : players) {
+            result[index] = player.name;
+            index++;
+        }
+        return result;
+    }
+
+    private String[] getPlayersClasses() {
+        String[] result = new String[playerPresets.length];
+        int index = 0;
+
+        for (PlayerPreset preset : playerPresets) {
+            result[index] = preset.name;
+            index++;
+        }
+        return result;
+    }
+
+    private void addPlayer() {
+        PlayerPreset preset = playerPresets[playerClassCombo.getSelectedIndex()];
+        String name = playerNameInput.getValue();
+
+        if (validateName(name)) {
+            players.add(new PlayerData(name, preset.texturePath, preset.playerClass, keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()]));
+
+            refreshPlayersCombo();
+            playerSelectCombo.setSelectedIndex(players.size() - 1);
+            playerCreatorWarningLabel.setText("");
+        }
+    }
+
+    private void updatePlayer() {
+        PlayerPreset preset = playerPresets[playerClassCombo.getSelectedIndex()];
+        PlayerData player = players.get(selectedPlayer);
+
+        String name = playerNameInput.getValue();
+
+        if (validateName(name)) {
+            player.name = name;
+            player.texturePath = preset.texturePath;
+            player.playerClass = preset.playerClass;
+            player.keyBinds = keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()];
+
+            refreshPlayersCombo();
+            playerCreatorWarningLabel.setText("");
+        }
+    }
+
+    private void removePlayer() {
+        players.remove(selectedPlayer);
+        refreshPlayersCombo();
+    }
+
+    private boolean validateName(String name) {
+        if (name.equals("")) {
+            playerCreatorWarningLabel.setText("name field cannot be empty");
+        } else if (Arrays.asList(getPlayersNames()).contains(name)) {
+            playerCreatorWarningLabel.setText("this name is already in use");
+        } else {
+            return true;
+        }
+        return false;
+    }
+
 
     private static String prepareName(String rawName) {
         String[] words = rawName.split("[.]")[0].replaceAll("[-_]", " ").split(" ");
@@ -121,5 +318,31 @@ public class GameMechanics {
         }
 
         return result;
+    }
+
+    private static class PlayerPreset {
+        public final String name;
+        public final String texturePath;
+        public final Player.Type playerClass;
+
+        private PlayerPreset(String name, String texturePath, Player.Type playerClass) {
+            this.name = name;
+            this.texturePath = texturePath;
+            this.playerClass = playerClass;
+        }
+    }
+
+    private static class PlayerData {
+        public String name;
+        public String texturePath;
+        public Player.Type playerClass;
+        public Player.KeyBinds keyBinds;
+
+        private PlayerData(String name, String texturePath, Player.Type playerClass, Player.KeyBinds keyBinds) {
+            this.name = name;
+            this.texturePath = texturePath;
+            this.playerClass = playerClass;
+            this.keyBinds = keyBinds;
+        }
     }
 }

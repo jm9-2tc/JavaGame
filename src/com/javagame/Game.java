@@ -8,6 +8,7 @@ import com.javagame.game.player.Knight;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GameScreen;
 import com.javagame.gui.GameWindow;
+import com.javagame.resources.Resources;
 
 import java.awt.event.KeyEvent;
 
@@ -25,17 +26,15 @@ public class Game {
         screen.addInterface(gameInterface);
         mechanics.setup();
 
-        Player.KeyBinds defaultKeys = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
+        /*Player.KeyBinds defaultKeys = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
 
         Player[] players = new Player[] {
-                new Knight(gameInstance, defaultKeys, 5, 5)
-        };
-
-        players[0].loadTexture("knight.png");
+                new Knight("player1", gameInstance, defaultKeys, Resources.loadTexture(Resources.playerTexturesPath + "knight.png"), 5, 5)
+        };*/
 
         //Arena arena = ArenaLoader.load("great-labyrinth", blockTextures);
 
-        gameInstance.setPlayers(players);
+        //gameInstance.setPlayers(players);
 
         window.add(screen);
 

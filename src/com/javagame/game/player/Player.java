@@ -9,18 +9,22 @@ import com.javagame.resources.Resources;
 import java.awt.*;
 
 public class Player implements IEntity {
-    public final AttackMatrix attackMatrix;
+
+    public final String name;
 
     public final Type type;
     public final KeyBinds keyBinds;
+    public final Image texture;
+    public final GameInstance gameInstance;
+    public final AttackMatrix attackMatrix;
 
     public final int maxHealth;
     public final int maxStamina;
     public final int maxMana;
 
+    private final int damage;
     public final int stepInterval;
 
-    private final GameInstance gameInstance;
 
     private int health;
     private int stamina;
@@ -31,20 +35,16 @@ public class Player implements IEntity {
 
     private long lastStep = 0;
 
-    private State state;
-
-    private Image texture;
-
-    private int damage;
-
     private int level = 1;
 
     private boolean attackDisabled = false;
 
-    public Player(GameInstance gameInstance, KeyBinds keyBinds, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
+    public Player(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
         this.keyBinds = keyBinds;
+        this.texture = texture;
         this.type = type;
+        this.name = name;
 
         this.maxHealth = maxHealth;
         this.maxStamina = maxStamina;
@@ -61,8 +61,6 @@ public class Player implements IEntity {
         this.health = maxHealth;
         this.stamina = maxStamina;
         this.mana = maxMana;
-
-        this.state = State.IDLE;
     }
 
     public void setHealth(int health) {
@@ -103,14 +101,6 @@ public class Player implements IEntity {
 
     public void restoreMana(int amount){
         setMana(mana + amount);
-    }
-
-    public void loadTexture(String filename) {
-        this.texture = Resources.loadTexture(Resources.playerTexturesPath + filename);
-    }
-
-    public Image getTexture() {
-        return texture;
     }
 
     public int getX() {
@@ -255,9 +245,9 @@ public class Player implements IEntity {
     }
 
     public enum Type {
-        WARRIOR,
+        KNIGHT,
         HEALER,
         ARCHER,
-        MAGE
+        SUMO
     }
 }
