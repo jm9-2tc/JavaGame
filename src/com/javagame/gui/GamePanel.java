@@ -50,54 +50,6 @@ public class GamePanel extends JPanel {
         remove(gameComponent.getComponent());
     }
 
-
-    /*public void addLabel(GameLabel gameLabel) {
-
-
-        label.setForeground(textColor);
-
-        add(label, gbc);
-
-    }
-
-    public void addButton(GameButton gameButton) {
-
-
-        button.setBackground(buttonsColor);
-        button.setForeground(textColor);
-
-        add(button, gbc);
-        gbc.insets = new Insets(30, 0, 0, 0);
-    }
-
-    public void addInput(GameInput gameInput) {
-
-
-        textField.setBackground(buttonsColor);
-        textField.setForeground(textColor);
-
-        add(textField, gbc);
-        gbc.insets = new Insets(30, 0, 0, 0);
-    }
-
-    public void addComboBox(GameComboBox gameComboBox) {
-        JComboBox<String> comboBox = new JComboBox<>();
-
-        for(String option : gameComboBox.options) {
-            comboBox.addItem(option);
-        }
-
-        comboBox.setPreferredSize(gameComboBox.size);
-        comboBox.setFont(new Font("consolas", Font.PLAIN, gameComboBox.fontSize));
-        comboBox.addActionListener(e -> gameComboBox.onChange.accept(comboBox.getSelectedIndex()));
-
-        comboBox.setBackground(buttonsColor);
-        comboBox.setForeground(textColor);
-
-        add(comboBox, gbc);
-        gbc.insets = new Insets(30, 0, 0, 0);
-    }*/
-
     public static abstract class GameComponent<C extends JComponent> {
         protected int fontSize;
         protected Color foreground;

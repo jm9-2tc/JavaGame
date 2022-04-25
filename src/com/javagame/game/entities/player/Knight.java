@@ -1,5 +1,6 @@
-package com.javagame.game.player;
+package com.javagame.game.entities.player;
 
+import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.GameInstance;
 
 import java.awt.*;

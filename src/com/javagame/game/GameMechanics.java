@@ -10,7 +10,7 @@ import java.util.Locale;
 
 import com.javagame.Game;
 import com.javagame.game.arena.ArenaLoader;
-import com.javagame.game.player.Player;
+import com.javagame.game.entities.player.Player;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameScreen;
@@ -38,8 +38,11 @@ public class GameMechanics {
     private GameComboBox playerSelectCombo;
     private GameComboBox playerClassCombo;
     private GameComboBox playerKeyBindsCombo;
+
+    private GameButton playerAddBtn;
     private GameButton playerUpdateBtn;
     private GameButton playerRemoveBtn;
+
     private GameInput playerNameInput;
     private GameLabel playerCreatorWarningLabel;
 
@@ -134,6 +137,7 @@ public class GameMechanics {
         playerClassCombo = new GameComboBox(btnSize, getPlayersClasses(), (arg) -> {});
         playerKeyBindsCombo = new GameComboBox(btnSize, keyBindsPresets.first, (arg) -> {});
 
+        playerAddBtn = new GameButton(btnSize, "add player", Game.mechanics::addPlayer);
         playerUpdateBtn = new GameButton(btnSize, "update player", Game.mechanics::updatePlayer);
         playerRemoveBtn = new GameButton(btnSize, "remove player", Game.mechanics::removePlayer);
 
@@ -156,7 +160,7 @@ public class GameMechanics {
 
         playersCreatorPanel.addComponent(playerCreatorWarningLabel);
 
-        playersCreatorPanel.addComponent(new GameButton(btnSize, "add player", Game.mechanics::addPlayer));
+        playersCreatorPanel.addComponent(playerAddBtn);
         playersCreatorPanel.addComponent(playerUpdateBtn);
         playersCreatorPanel.addComponent(playerRemoveBtn);
 
@@ -184,20 +188,41 @@ public class GameMechanics {
 
     private void showPlayersCreatorPanel() {
         gameInterface.setPanel(playersCreatorPanel);
-        refreshPlayersCombo();
+        newPlayerPanel();
     }
 
-    private void refreshPlayersCombo() {
+    private void existingPlayerPanel() {
+        //PlayerData currentPlayer = selectedPlayer > -1 ? players.get(selectedPlayer) : null;
+
         String[] playerNames = getPlayersNames();
+
         boolean anyPlayers = playerNames.length > 0;
 
         playerSelectCombo.setOptions(playerNames);
-
         playerSelectCombo.setEnabled(anyPlayers);
+
+        playerAddBtn.setEnabled(false);
         playerUpdateBtn.setEnabled(anyPlayers);
         playerRemoveBtn.setEnabled(anyPlayers);
 
         playerSelectCombo.refresh();
+        playerKeyBindsCombo.refresh();
+
+        playerAddBtn.refresh();
+        playerUpdateBtn.refresh();
+        playerRemoveBtn.refresh();
+    }
+
+    private void newPlayerPanel() {
+        String[] keyBinds = getAvailableKeyBinds(null);
+
+        playerKeyBindsCombo.setOptions(keyBinds);
+
+        playerAddBtn.setEnabled(keyBinds.length > 0);
+        playerUpdateBtn.setEnabled(false);
+        playerRemoveBtn.setEnabled(false);
+
+        playerAddBtn.refresh();
         playerUpdateBtn.refresh();
         playerRemoveBtn.refresh();
     }
@@ -208,12 +233,16 @@ public class GameMechanics {
         selectedPlayer = index;
         PlayerData currentPlayer = players.get(index);
 
+        playerKeyBindsCombo.setOptions(getAvailableKeyBinds(currentPlayer));
+        playerKeyBindsCombo.refresh();
+
         playerNameInput.setValue(currentPlayer.name);
         playerClassCombo.setSelectedIndex(getPresetIndex(currentPlayer.playerClass));
         playerKeyBindsCombo.setSelectedIndex(getKeyBindsIndex(currentPlayer.keyBinds));
 
         playerNameInput.refresh();
         playerClassCombo.refresh();
+        playerKeyBindsCombo.refresh();
     }
 
     private int getPresetIndex(Player.Type playerClass) {
@@ -235,7 +264,7 @@ public class GameMechanics {
     }
 
     private String[] getPlayersNames() {
-        String[] result = new String[players.size()];
+        String[] result = new String[players.size() + 1];
         int index = 0;
 
         for (PlayerData player : players) {
@@ -256,15 +285,34 @@ public class GameMechanics {
         return result;
     }
 
+    private String[] getAvailableKeyBinds(PlayerData playerToSkip) {
+        List<String> result = new ArrayList<>(); // new String[keyBindsPresets.first.length];
+        List<Player.KeyBinds> availableKeyBinds = new ArrayList<>(Arrays.asList(keyBindsPresets.second));
+
+        for (PlayerData player : players) {
+            if (player == playerToSkip) {
+                continue;
+            }
+            availableKeyBinds.remove(player.keyBinds);
+        }
+
+        for(int index = 0; index < keyBindsPresets.first.length; index++) {
+            if (availableKeyBinds.contains(keyBindsPresets.second[index])) {
+                result.add(keyBindsPresets.first[index]);
+            }
+        }
+        return result.toArray(new String[0]);
+    }
+
     private void addPlayer() {
         PlayerPreset preset = playerPresets[playerClassCombo.getSelectedIndex()];
         String name = playerNameInput.getValue();
 
-        if (validateName(name)) {
+        if (validateName(name, isPlayerNameUsed(name, null))) {
             players.add(new PlayerData(name, preset.texturePath, preset.playerClass, keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()]));
 
-            refreshPlayersCombo();
-            playerSelectCombo.setSelectedIndex(players.size() - 1);
+            newPlayerPanel();
+            playerSelectCombo.setSelectedIndex(players.size());
             playerCreatorWarningLabel.setText("");
         }
     }
@@ -275,26 +323,30 @@ public class GameMechanics {
 
         String name = playerNameInput.getValue();
 
-        if (validateName(name)) {
+        if (validateName(name, isPlayerNameUsed(name, player.name))) {
             player.name = name;
             player.texturePath = preset.texturePath;
             player.playerClass = preset.playerClass;
             player.keyBinds = keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()];
 
-            refreshPlayersCombo();
+            existingPlayerPanel();
             playerCreatorWarningLabel.setText("");
         }
     }
 
     private void removePlayer() {
         players.remove(selectedPlayer);
-        refreshPlayersCombo();
+        newPlayerPanel();
     }
 
-    private boolean validateName(String name) {
+    private boolean isPlayerNameUsed(String name, String nameToSkip) {
+        return !name.equals(nameToSkip) && Arrays.asList(getPlayersNames()).contains(name);
+    }
+
+    private boolean validateName(String name, boolean condition) {
         if (name.equals("")) {
             playerCreatorWarningLabel.setText("name field cannot be empty");
-        } else if (Arrays.asList(getPlayersNames()).contains(name)) {
+        } else if (condition) {
             playerCreatorWarningLabel.setText("this name is already in use");
         } else {
             return true;

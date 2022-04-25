@@ -3,14 +3,9 @@ package com.javagame;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
 import com.javagame.game.GameMechanics;
-import com.javagame.game.player.Player;
-import com.javagame.game.player.Knight;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GameScreen;
 import com.javagame.gui.GameWindow;
-import com.javagame.resources.Resources;
-
-import java.awt.event.KeyEvent;
 
 public class Game {
     public static final GameEvents events = new GameEvents();

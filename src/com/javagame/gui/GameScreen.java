@@ -4,7 +4,7 @@ import com.javagame.Constants;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
 import com.javagame.game.arena.Arena;
-import com.javagame.game.player.Player;
+import com.javagame.game.entities.player.Player;
 
 import javax.swing.*;
 import java.awt.*;

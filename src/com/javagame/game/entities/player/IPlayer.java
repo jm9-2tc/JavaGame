@@ -1,10 +1,9 @@
-package com.javagame.game.player;
+package com.javagame.game.entities.player;
 
 import com.javagame.game.IEntity;
 
 public interface IPlayer extends IEntity {
     void levelUp();
-    void attack();
 
     void loseHealth(int amount);
     void restoreHealth(int amount);

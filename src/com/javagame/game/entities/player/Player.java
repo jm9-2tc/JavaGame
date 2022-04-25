@@ -1,10 +1,10 @@
-package com.javagame.game.player;
+package com.javagame.game.entities.player;
 
 import com.javagame.Constants;
+import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.GameInstance;
 import com.javagame.game.IEntity;
 import com.javagame.game.arena.Arena;
-import com.javagame.resources.Resources;
 
 import java.awt.*;
 
@@ -134,8 +134,8 @@ public class Player implements IEntity {
             tryChangePos(x + 1, y);
         }
 
-        if (keyCode == keyBinds.attack) {
-            attack();
+        if (keyCode == keyBinds.attack && !attackDisabled) {
+            gameInstance.attack(attackMatrix, x, y, damage);
         }
     }
 
@@ -182,45 +182,6 @@ public class Player implements IEntity {
         return false;
     }
 
-    public void attack() {
-        if (attackDisabled) return;
-
-        switch (attackMatrix) {
-            case ALL:
-                for (int a = x - 2; a <= x + 2; a++) {
-                    for (int b = y - 2; b <= y + 2; b++) {
-                        if (a == x && b == y) continue;
-                        gameInstance.tryAttackPlayer(a, b, damage);
-                    }
-                }
-                break;
-
-            case SQUARE:
-                for (int a = x - 1; a <= x + 1; a++) {
-                    for (int b = y - 1; b <= y + 1; b++) {
-                        if (a == x && b == y) continue;
-                        gameInstance.tryAttackPlayer(a, b, damage);
-                    }
-                }
-                break;
-
-            case CROSS:
-                gameInstance.tryAttackPlayer(x - 1, y, damage);
-                gameInstance.tryAttackPlayer(x + 1, y, damage);
-                gameInstance.tryAttackPlayer(x, y - 1, damage);
-                gameInstance.tryAttackPlayer(x, y + 1, damage);
-                break;
-
-            case CORNERS:
-                gameInstance.tryAttackPlayer(x - 1, y - 1, damage);
-                gameInstance.tryAttackPlayer(x + 1, y - 1, damage);
-                gameInstance.tryAttackPlayer(x - 1, y + 1, damage);
-                gameInstance.tryAttackPlayer(x + 1, y + 1, damage);
-                break;
-
-        }
-    }
-
     public static class KeyBinds {
         public final int moveUp;
         public final int moveDown;
@@ -235,12 +196,6 @@ public class Player implements IEntity {
             this.moveRight = moveRight;
             this.attack = attack;
         }
-    }
-
-    public enum State {
-        IDLE,
-        ATTACK_LEFT,
-        ATTACK_RIGHT
     }
 
     public enum Type {

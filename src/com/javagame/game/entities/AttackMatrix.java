@@ -1,4 +1,4 @@
-package com.javagame.game.player;
+package com.javagame.game.entities;
 
 public enum AttackMatrix {
     ALL,

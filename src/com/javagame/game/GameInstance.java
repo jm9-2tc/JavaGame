@@ -2,7 +2,12 @@ package com.javagame.game;
 
 import com.javagame.Constants;
 import com.javagame.game.arena.Arena;
-import com.javagame.game.player.Player;
+import com.javagame.game.entities.AttackMatrix;
+import com.javagame.game.entities.monster.Monster;
+import com.javagame.game.entities.player.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameInstance {
     public final GameEvents gameEvents;
@@ -23,11 +28,14 @@ public class GameInstance {
 
     public boolean ready = false;
 
+    public final List<Monster> monsters;
+
     private Arena arena;
 
     public GameInstance(GameEvents gameEvents) {
         this.gameEvents = gameEvents;
         this.players = new Player[0];
+        this.monsters = new ArrayList<>();
     }
 
     public boolean isFieldEmpty(int x, int y) {
@@ -35,6 +43,43 @@ public class GameInstance {
             return false;
         }
         return boardPlayers[x][y] == 0;
+    }
+
+    public void attack(AttackMatrix matrix, int x, int y, int damage) {
+        switch (matrix) {
+            case ALL:
+                for (int a = x - 2; a <= x + 2; a++) {
+                    for (int b = y - 2; b <= y + 2; b++) {
+                        if (a == x && b == y) continue;
+                        tryAttackPlayer(a, b, damage);
+                    }
+                }
+                break;
+
+            case SQUARE:
+                for (int a = x - 1; a <= x + 1; a++) {
+                    for (int b = y - 1; b <= y + 1; b++) {
+                        if (a == x && b == y) continue;
+                        tryAttackPlayer(a, b, damage);
+                    }
+                }
+                break;
+
+            case CROSS:
+                tryAttackPlayer(x - 1, y, damage);
+                tryAttackPlayer(x + 1, y, damage);
+                tryAttackPlayer(x, y - 1, damage);
+                tryAttackPlayer(x, y + 1, damage);
+                break;
+
+            case CORNERS:
+                tryAttackPlayer(x - 1, y - 1, damage);
+                tryAttackPlayer(x + 1, y - 1, damage);
+                tryAttackPlayer(x - 1, y + 1, damage);
+                tryAttackPlayer(x + 1, y + 1, damage);
+                break;
+
+        }
     }
 
     public void tryAttackPlayer(int x, int y, int damage) {

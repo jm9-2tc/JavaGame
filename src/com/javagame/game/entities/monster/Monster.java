@@ -1,15 +1,14 @@
-package com.javagame.game.monster;
+package com.javagame.game.entities.monster;
 
 import com.javagame.Constants;
 import com.javagame.game.GameInstance;
-import com.javagame.game.IEntity;
 import com.javagame.game.arena.Arena;
-import com.javagame.game.player.AttackMatrix;
-import com.javagame.game.player.Player;
+import com.javagame.game.entities.AttackMatrix;
+import com.javagame.game.entities.player.Player;
 
 import java.awt.*;
 
-public class Monster implements IMonster {
+public class Monster implements com.javagame.game.entities.monster.IMonster {
 
     private int health;
     private int x;
@@ -30,7 +29,7 @@ public class Monster implements IMonster {
     }
 
     public void move() {
-        attack();
+        gameInstance.attack(attackMatrix, x, y, damage);
         Player[] players = gameInstance.getPlayers();
         Player nearestPlayer = players[0];
         double dist = Math.sqrt(Math.pow(nearestPlayer.getX(), 2) + Math.pow(nearestPlayer.getY(), 2));
@@ -112,44 +111,6 @@ public class Monster implements IMonster {
 
     public void levelUp() {
 
-    }
-
-    @Override
-    public void attack() {
-        switch (attackMatrix) {
-            case ALL:
-                for (int a = x - 2; a <= x + 2; a++) {
-                    for (int b = y - 2; b <= y + 2; b++) {
-                        if (a == x && b == y) continue;
-                        gameInstance.tryAttackPlayer(a, b, damage);
-                    }
-                }
-                break;
-
-            case SQUARE:
-                for (int a = x - 1; a <= x + 1; a++) {
-                    for (int b = y - 1; b <= y + 1; b++) {
-                        if (a == x && b == y) continue;
-                        gameInstance.tryAttackPlayer(a, b, damage);
-                    }
-                }
-                break;
-
-            case CROSS:
-                gameInstance.tryAttackPlayer(x - 1, y, damage);
-                gameInstance.tryAttackPlayer(x + 1, y, damage);
-                gameInstance.tryAttackPlayer(x, y - 1, damage);
-                gameInstance.tryAttackPlayer(x, y + 1, damage);
-                break;
-
-            case CORNERS:
-                gameInstance.tryAttackPlayer(x - 1, y - 1, damage);
-                gameInstance.tryAttackPlayer(x + 1, y - 1, damage);
-                gameInstance.tryAttackPlayer(x - 1, y + 1, damage);
-                gameInstance.tryAttackPlayer(x + 1, y + 1, damage);
-                break;
-
-        }
     }
 
     @Override
