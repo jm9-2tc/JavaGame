@@ -144,6 +144,9 @@ public class GameMechanics {
         playerNameInput = new GameInput(btnSize);
         playerCreatorWarningLabel = new GameLabel("");
 
+        playerNameInput.setAlphanumeric(true);
+
+
         playersCreatorPanel.addComponent(new GameLabel("Create players", 48));
 
         playersCreatorPanel.addComponent(new GameLabel("select player:"));
@@ -216,11 +219,16 @@ public class GameMechanics {
     private void newPlayerPanel() {
         String[] keyBinds = getAvailableKeyBinds(null);
 
+        playerSelectCombo.setOptions(getPlayersNames());
+        playerSelectCombo.setSelectedIndex(players.size());
+
         playerKeyBindsCombo.setOptions(keyBinds);
 
         playerAddBtn.setEnabled(keyBinds.length > 0);
         playerUpdateBtn.setEnabled(false);
         playerRemoveBtn.setEnabled(false);
+
+        playerSelectCombo.refresh();
 
         playerAddBtn.refresh();
         playerUpdateBtn.refresh();
@@ -228,7 +236,10 @@ public class GameMechanics {
     }
 
     private void selectPlayer(int index) {
-        if (index < 0) return;
+        if (index < players.size() - 1) {
+            newPlayerPanel();
+            return;
+        }
 
         selectedPlayer = index;
         PlayerData currentPlayer = players.get(index);
@@ -271,6 +282,9 @@ public class GameMechanics {
             result[index] = player.name;
             index++;
         }
+
+        result[result.length - 1] = "<New player>";
+
         return result;
     }
 
@@ -312,7 +326,7 @@ public class GameMechanics {
             players.add(new PlayerData(name, preset.texturePath, preset.playerClass, keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()]));
 
             newPlayerPanel();
-            playerSelectCombo.setSelectedIndex(players.size());
+            //playerSelectCombo.setSelectedIndex(players.size());
             playerCreatorWarningLabel.setText("");
         }
     }

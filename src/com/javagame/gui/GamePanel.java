@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class GamePanel extends JPanel {
     private final Color textColor;
@@ -135,6 +136,7 @@ public class GamePanel extends JPanel {
         public final String defaultValue;
 
         private boolean enabled = true;
+        private boolean alphanumeric = false;
 
         public GameInput(Dimension size) {
             this(size, "", 16);
@@ -160,6 +162,7 @@ public class GamePanel extends JPanel {
             JTextField textField = new JTextField(defaultValue);
             textField.setFont(new Font("consolas", Font.PLAIN, fontSize));
             textField.setPreferredSize(size);
+            //textField.addActionListener(e -> onValueChanged());
             component = textField;
         }
 
@@ -178,6 +181,20 @@ public class GamePanel extends JPanel {
 
         public void setValue(String value) {
             component.setText(value);
+        }
+
+        public boolean isAlphanumeric() {
+            return alphanumeric;
+        }
+
+        public void setAlphanumeric(boolean alphanumeric) {
+            this.alphanumeric = alphanumeric;
+        }
+
+        private void onValueChanged() {
+            if (alphanumeric) {
+                component.setText(component.getText().replaceAll("[^-A-Za-z0-9_]]", ""));
+            }
         }
     }
 
