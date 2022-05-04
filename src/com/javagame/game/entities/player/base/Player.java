@@ -1,4 +1,4 @@
-package com.javagame.game.entities.player;
+package com.javagame.game.entities.player.base;
 
 import com.javagame.Constants;
 import com.javagame.game.entities.AttackMatrix;
@@ -139,26 +139,6 @@ public class Player implements IEntity {
         }
     }
 
-    private void tryChangePos(int newX, int newY) {
-        long frame = gameInstance.gameEvents.getFrame();
-
-        if (lastStep + stepInterval > frame) {
-            return;
-        }
-
-        lastStep = frame;
-
-        //System.out.println(frame);
-
-        if (gameInstance.isFieldEmpty(newX, newY)) {
-            Arena arena = gameInstance.getArena();
-            if (!onCollideWith(arena, newX, newY)) {
-                x = newX;
-                y = newY;
-            }
-        }
-    }
-
     public boolean onCollideWith(Arena arena, int newX, int newY) {
         attackDisabled = false;
 
@@ -182,6 +162,32 @@ public class Player implements IEntity {
         return false;
     }
 
+    public void moveTo(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+
+    private void tryChangePos(int newX, int newY) {
+        long frame = gameInstance.gameEvents.getFrame();
+
+        if (lastStep + stepInterval > frame) {
+            return;
+        }
+
+        lastStep = frame;
+
+        //System.out.println(frame);
+
+        if (gameInstance.isFieldEmpty(newX, newY)) {
+            Arena arena = gameInstance.getArena();
+            if (!onCollideWith(arena, newX, newY)) {
+                x = newX;
+                y = newY;
+            }
+        }
+    }
+
     public static class KeyBinds {
         public final int moveUp;
         public final int moveDown;
@@ -200,8 +206,8 @@ public class Player implements IEntity {
 
     public enum Type {
         KNIGHT,
-        HEALER,
         ARCHER,
+        NINJA,
         SUMO
     }
 }

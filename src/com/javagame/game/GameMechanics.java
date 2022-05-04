@@ -7,10 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import com.javagame.Game;
 import com.javagame.game.arena.ArenaLoader;
-import com.javagame.game.entities.player.Player;
+import com.javagame.game.entities.player.Archer;
+import com.javagame.game.entities.player.Ninja;
+import com.javagame.game.entities.player.Knight;
+import com.javagame.game.entities.player.Sumo;
+import com.javagame.game.entities.player.base.Player;
 import com.javagame.gui.GameInterface;
 import com.javagame.gui.GamePanel;
 import com.javagame.gui.GameScreen;
@@ -34,6 +39,10 @@ public class GameMechanics {
     private static final Pair<String[], Player.KeyBinds[]> keyBindsPresets = new Pair<>(null, null);
     private static final PlayerPreset[] playerPresets;
 
+    private static final String playerNameRegex = "^[-_ a-zA-Z0-9]+$";
+
+
+    private GameButton gameStartBtn;
 
     private GameComboBox playerSelectCombo;
     private GameComboBox playerClassCombo;
@@ -89,20 +98,29 @@ public class GameMechanics {
 
         // Initialize player presets:
 
-        playerPresets = new PlayerPreset[1];
+        playerPresets = new PlayerPreset[4];
 
-        playerPresets[0] = new PlayerPreset("Knight", Resources.playerTexturesPath + "knight.png", Player.Type.KNIGHT);
+        playerPresets[0] = new PlayerPreset("Knight", "knight.png", Player.Type.KNIGHT);
+        playerPresets[1] = new PlayerPreset("Archer", "archer.png", Player.Type.ARCHER);
+        playerPresets[2] = new PlayerPreset("Ninja", "ninja.png", Player.Type.NINJA);
+        playerPresets[3] = new PlayerPreset("Sumo", "sumo.png", Player.Type.SUMO);
 
         // Initialize key binds:
 
-        keyBindsPresets.first = new String[2];
-        keyBindsPresets.second = new Player.KeyBinds[2];
+        keyBindsPresets.first = new String[4];
+        keyBindsPresets.second = new Player.KeyBinds[4];
 
-        keyBindsPresets.first[0] = "W S A D Space";
-        keyBindsPresets.second[0] = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
+        keyBindsPresets.first[0] = "W S A D Tab";
+        keyBindsPresets.second[0] = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_TAB);
 
         keyBindsPresets.first[1] = "↑ ↓ ← → Enter";
         keyBindsPresets.second[1] = new Player.KeyBinds(KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
+
+        keyBindsPresets.first[2] = "I K J L <";
+        keyBindsPresets.second[2] = new Player.KeyBinds(KeyEvent.VK_I, KeyEvent.VK_K, KeyEvent.VK_J, KeyEvent.VK_L, KeyEvent.VK_KP_LEFT);
+
+        keyBindsPresets.first[3] = "G B V N Space";
+        keyBindsPresets.second[3] = new Player.KeyBinds(KeyEvent.VK_G, KeyEvent.VK_B, KeyEvent.VK_V, KeyEvent.VK_N, KeyEvent.VK_SPACE);
 
         // Initialize panels:
 
@@ -121,7 +139,7 @@ public class GameMechanics {
 
         // Welcome panel:
 
-        Runnable onclick = () -> System.out.println("clicked");
+        gameStartBtn = new GameButton(btnSize, "start", this::startGame);
 
         welcomePanel.addComponent(new GameLabel("Welcome", 48));
         welcomePanel.addComponent(new GameButton(btnSize, "create players", this::showPlayersCreatorPanel));
@@ -129,7 +147,7 @@ public class GameMechanics {
         welcomePanel.addComponent(new GameLabel("select arena:"));
         welcomePanel.addComponent(new GameComboBox(btnSize, arenas.first, this::loadArena));
 
-        welcomePanel.addComponent(new GameButton(btnSize, "start", onclick));
+        welcomePanel.addComponent(gameStartBtn);
 
         // Players creator panel:
 
@@ -159,6 +177,7 @@ public class GameMechanics {
         playersCreatorPanel.addComponent(playerKeyBindsCombo);
 
         playersCreatorPanel.addComponent(new GameLabel("insert player name:"));
+        playersCreatorPanel.addComponent(new GameLabel("(only letters, digits, space, '_' and '-' allowed)", 12));
         playersCreatorPanel.addComponent(playerNameInput);
 
         playersCreatorPanel.addComponent(playerCreatorWarningLabel);
@@ -180,11 +199,38 @@ public class GameMechanics {
 
     private void showWelcomePanel() {
         gameInterface.setPanel(welcomePanel);
+        gameStartBtn.setEnabled(players.size() > 0);
+        gameStartBtn.refresh();
     }
 
     private void loadArena(int number) {
         gameInstance.setArena(ArenaLoader.load(arenas.second[number], blocksTextures));
         gameScreen.recenter();
+    }
+
+    private void startGame() {
+        Player[] p = players.stream().map(this::playerFromData).collect(Collectors.toList()).toArray(Player[]::new);
+        gameInstance.setPlayers(p);
+        gameInterface.hidePanel();
+    }
+
+    private Player playerFromData(PlayerData data) {
+        Image texture = Resources.loadTexture(Resources.playerTexturesPath + data.texturePath);
+
+        switch (data.playerClass) {
+            case ARCHER:
+                return new Archer(data.name, gameInstance, data.keyBinds, texture, 0, 0);
+
+            case NINJA:
+                return new Ninja(data.name, gameInstance, data.keyBinds, texture, 0, 0);
+
+            case KNIGHT:
+                return new Knight(data.name, gameInstance, data.keyBinds, texture, 0, 0);
+
+            case SUMO:
+                return new Sumo(data.name, gameInstance, data.keyBinds, texture, 0, 0);
+        }
+        return null;
     }
 
     // players creator panel methods:
@@ -195,8 +241,6 @@ public class GameMechanics {
     }
 
     private void existingPlayerPanel() {
-        //PlayerData currentPlayer = selectedPlayer > -1 ? players.get(selectedPlayer) : null;
-
         String[] playerNames = getPlayersNames();
 
         boolean anyPlayers = playerNames.length > 0;
@@ -228,6 +272,9 @@ public class GameMechanics {
         playerUpdateBtn.setEnabled(false);
         playerRemoveBtn.setEnabled(false);
 
+        playerNameInput.setValue("");
+        playerNameInput.refresh();
+
         playerSelectCombo.refresh();
 
         playerAddBtn.refresh();
@@ -236,10 +283,14 @@ public class GameMechanics {
     }
 
     private void selectPlayer(int index) {
-        if (index < players.size() - 1) {
+        if (index < 0) return;
+
+        if (index == players.size()) {
             newPlayerPanel();
             return;
         }
+
+        existingPlayerPanel();
 
         selectedPlayer = index;
         PlayerData currentPlayer = players.get(index);
@@ -300,7 +351,7 @@ public class GameMechanics {
     }
 
     private String[] getAvailableKeyBinds(PlayerData playerToSkip) {
-        List<String> result = new ArrayList<>(); // new String[keyBindsPresets.first.length];
+        List<String> result = new ArrayList<>();
         List<Player.KeyBinds> availableKeyBinds = new ArrayList<>(Arrays.asList(keyBindsPresets.second));
 
         for (PlayerData player : players) {
@@ -318,15 +369,27 @@ public class GameMechanics {
         return result.toArray(new String[0]);
     }
 
+    private Player.KeyBinds getCurrentKeyBinds() {
+        String selected = playerKeyBindsCombo.getOptions()[playerKeyBindsCombo.getSelectedIndex()];
+        int index = 0;
+
+        for (String keyBinds : keyBindsPresets.first) {
+            if (keyBinds == selected) {
+                return keyBindsPresets.second[index];
+            }
+            index++;
+        }
+        return null;
+    }
+
     private void addPlayer() {
         PlayerPreset preset = playerPresets[playerClassCombo.getSelectedIndex()];
         String name = playerNameInput.getValue();
 
         if (validateName(name, isPlayerNameUsed(name, null))) {
-            players.add(new PlayerData(name, preset.texturePath, preset.playerClass, keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()]));
+            players.add(new PlayerData(name, preset.texturePath, preset.playerClass, getCurrentKeyBinds()));
 
             newPlayerPanel();
-            //playerSelectCombo.setSelectedIndex(players.size());
             playerCreatorWarningLabel.setText("");
         }
     }
@@ -341,7 +404,7 @@ public class GameMechanics {
             player.name = name;
             player.texturePath = preset.texturePath;
             player.playerClass = preset.playerClass;
-            player.keyBinds = keyBindsPresets.second[playerKeyBindsCombo.getSelectedIndex()];
+            player.keyBinds = getCurrentKeyBinds();
 
             existingPlayerPanel();
             playerCreatorWarningLabel.setText("");
@@ -358,8 +421,8 @@ public class GameMechanics {
     }
 
     private boolean validateName(String name, boolean condition) {
-        if (name.equals("")) {
-            playerCreatorWarningLabel.setText("name field cannot be empty");
+        if (!name.matches(playerNameRegex)) {
+            playerCreatorWarningLabel.setText("invalid player name");
         } else if (condition) {
             playerCreatorWarningLabel.setText("this name is already in use");
         } else {

@@ -19,4 +19,9 @@ public class GameInterface extends JPanel {
         add(panel, gbc);
         getParent().revalidate();
     }
+
+    public void hidePanel() {
+        removeAll();
+        getParent().revalidate();
+    }
 }

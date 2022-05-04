@@ -4,7 +4,7 @@ import com.javagame.Constants;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
 import com.javagame.game.arena.Arena;
-import com.javagame.game.entities.player.Player;
+import com.javagame.game.entities.player.base.Player;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +56,7 @@ public class GameScreen extends JPanel {
         int y = marginY + player.getY() * unitSize;
 
         graphics.drawImage(player.texture, x, y, unitSize, unitSize, this);
-        graphics.drawString(String.valueOf(player.getHealth()), x, y + 16);
+        graphics.drawString(String.valueOf(player.getHealth()), x, y);
     }
 
     private void drawEnvironment(Graphics graphics) {

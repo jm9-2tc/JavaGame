@@ -1,6 +1,6 @@
 package com.javagame.game;
 
-import com.javagame.game.entities.player.Player;
+import com.javagame.game.entities.player.base.Player;
 import com.javagame.gui.GameScreen;
 
 import java.util.concurrent.atomic.AtomicLong;

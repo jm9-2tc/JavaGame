@@ -1,4 +1,4 @@
-package com.javagame.game.entities.player;
+package com.javagame.game.entities.player.base;
 
 import com.javagame.game.IEntity;
 

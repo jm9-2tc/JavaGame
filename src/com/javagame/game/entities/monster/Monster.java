@@ -4,7 +4,7 @@ import com.javagame.Constants;
 import com.javagame.game.GameInstance;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.AttackMatrix;
-import com.javagame.game.entities.player.Player;
+import com.javagame.game.entities.player.base.Player;
 
 import java.awt.*;
 

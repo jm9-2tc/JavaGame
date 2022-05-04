@@ -4,21 +4,13 @@ import com.javagame.Constants;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.entities.monster.Monster;
-import com.javagame.game.entities.player.Player;
+import com.javagame.game.entities.player.base.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class GameInstance {
     public final GameEvents gameEvents;
-
-    public Player[] getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(Player[] players) {
-        this.players = players;
-    }
 
     public Player[] players;
     public byte[][] boardPlayers;
@@ -83,7 +75,7 @@ public class GameInstance {
     }
 
     public void tryAttackPlayer(int x, int y, int damage) {
-        if (x < 0 || y < 0 || x >= width || y >= height) return;
+        if (x < 0 || y < 0 || x >= arena.width || y >= arena.height) return;
         byte playerId = boardPlayers[x][y];
         if (playerId < 0) return;
 
@@ -93,12 +85,25 @@ public class GameInstance {
         }
     }
 
+    public void spawnPlayer(Player player, byte playerId) {
+        while (true) {
+            int newX = (int) (Math.random() * arena.width);
+            int newY = (int) (Math.random() * arena.height);
+
+            if (boardPlayers[newX][newY] == 0 && arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
+                boardPlayers[newX][newY] = playerId;
+                player.moveTo(newX, newY);
+                break;
+            }
+        }
+    }
+
     public void handleGameOver(String name, int x, int y) {
         //TODO: show UI
 
         while (true) {
-            int newX = (int) (Math.random() * width);
-            int newY = (int) (Math.random() * height);
+            int newX = (int) (Math.random() * arena.width);
+            int newY = (int) (Math.random() * arena.height);
 
             if (arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
                 boardPlayers[newX][newY] = boardPlayers[x][y];
@@ -107,6 +112,21 @@ public class GameInstance {
         }
         boardPlayers[x][y] = -1;
     }
+
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Player[] players) {
+        this.players = players;
+        byte index = 0;
+
+        for (Player player : players) {
+            spawnPlayer(player, index++);
+        }
+    }
+
 
     public Arena getArena() {
         return arena;
