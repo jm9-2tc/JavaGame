@@ -1,9 +1,9 @@
-package com.javagame.game.entities.monster;
+package com.javagame.game.entities.monster.base;
 
 import com.javagame.game.IEntity;
 
 public interface IMonster extends IEntity {
-    void loseHealth(int amount);
+
 
     //void loadTexture(String filename);
 }

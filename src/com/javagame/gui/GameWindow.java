@@ -7,6 +7,8 @@ import java.awt.*;
 
 public class GameWindow extends JFrame {
     public GameWindow() {
+        //setAlwaysOnTop(true);
+        //setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setUndecorated(true);
         setVisible(true);

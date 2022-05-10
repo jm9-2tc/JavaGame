@@ -1,9 +1,16 @@
 package com.javagame.game;
 
+import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
 import com.javagame.gui.GameScreen;
+import com.javagame.resources.Resources;
 
+import javax.swing.*;
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static com.javagame.game.entities.AttackMatrix.CROSS;
 
 public class GameEvents implements Runnable {
     private GameInstance gameInstance;

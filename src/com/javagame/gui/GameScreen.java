@@ -3,10 +3,13 @@ package com.javagame.gui;
 import com.javagame.Constants;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
+import com.javagame.game.IEntity;
 import com.javagame.game.arena.Arena;
+import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
 
 import javax.swing.*;
+import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -47,16 +50,19 @@ public class GameScreen extends JPanel {
         drawEnvironment(graphics);
 
         for (Player player : gameInstance.players) {
-            drawPlayer(graphics, player);
+            drawEntity(graphics, player);
+        }
+        for (Monster monster : gameInstance.monsters) {
+            drawEntity(graphics, monster);
         }
     }
 
-    private void drawPlayer(Graphics graphics, Player player) {
-        int x = marginX + player.getX() * unitSize;
-        int y = marginY + player.getY() * unitSize;
+    private void drawEntity(Graphics graphics, IEntity entity) {
+        int x = marginX + entity.getX() * unitSize;
+        int y = marginY + entity.getY() * unitSize;
 
-        graphics.drawImage(player.texture, x, y, unitSize, unitSize, this);
-        graphics.drawString(String.valueOf(player.getHealth()), x, y);
+        graphics.drawImage(entity.getTexture(), x, y, unitSize, unitSize, this);
+        graphics.drawString(String.valueOf(entity.getHealth()), x, y);
     }
 
     private void drawEnvironment(Graphics graphics) {

@@ -37,6 +37,7 @@ public class Player implements IEntity {
     private int level = 1;
 
     private boolean attackDisabled = false;
+    private boolean movingDisabled;
 
     public Player(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
@@ -60,6 +61,8 @@ public class Player implements IEntity {
         this.health = maxHealth;
         this.stamina = maxStamina;
         this.mana = maxMana;
+
+        this.movingDisabled = true;
     }
 
     public void setHealth(int health) {
@@ -80,6 +83,9 @@ public class Player implements IEntity {
 
     public void loseHealth(int amount) {
         setHealth(health - amount);
+        if(health == 0){
+            die();
+        }
     }
 
     public void restoreHealth(int amount) {
@@ -102,6 +108,11 @@ public class Player implements IEntity {
         setMana(mana + amount);
     }
 
+    public void die(){
+        this.movingDisabled = true;
+        this.attackDisabled = true;
+    }
+
     public int getX() {
         return x;
     }
@@ -109,7 +120,6 @@ public class Player implements IEntity {
     public int getY() {
         return y;
     }
-
 
     public int getHealth() {
         return health;
@@ -121,6 +131,10 @@ public class Player implements IEntity {
 
     public int getMana() {
         return mana;
+    }
+
+    public Image getTexture(){
+        return texture;
     }
 
     public void handleKeyEvent(int keyCode) {
@@ -166,7 +180,6 @@ public class Player implements IEntity {
         this.x = x;
         this.y = y;
     }
-
 
     private void tryChangePos(int newX, int newY) {
         long frame = gameInstance.gameEvents.getFrame();

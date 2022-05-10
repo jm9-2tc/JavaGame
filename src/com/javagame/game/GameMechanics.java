@@ -3,14 +3,13 @@ package com.javagame.game;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.javagame.Game;
 import com.javagame.game.arena.ArenaLoader;
+import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.Archer;
 import com.javagame.game.entities.player.Ninja;
 import com.javagame.game.entities.player.Knight;
@@ -22,6 +21,7 @@ import com.javagame.gui.GameScreen;
 import com.javagame.resources.Resources;
 import com.javagame.types.Pair;
 
+import static com.javagame.game.entities.AttackMatrix.CROSS;
 import static com.javagame.gui.GamePanel.*;
 
 public class GameMechanics {
@@ -110,8 +110,8 @@ public class GameMechanics {
         keyBindsPresets.first = new String[4];
         keyBindsPresets.second = new Player.KeyBinds[4];
 
-        keyBindsPresets.first[0] = "W S A D Tab";
-        keyBindsPresets.second[0] = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_TAB);
+        keyBindsPresets.first[0] = "W S A D X";
+        keyBindsPresets.second[0] = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_X);
 
         keyBindsPresets.first[1] = "↑ ↓ ← → Enter";
         keyBindsPresets.second[1] = new Player.KeyBinds(KeyEvent.VK_UP, KeyEvent.VK_DOWN, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT, KeyEvent.VK_ENTER);
@@ -211,6 +211,7 @@ public class GameMechanics {
     private void startGame() {
         Player[] p = players.stream().map(this::playerFromData).collect(Collectors.toList()).toArray(Player[]::new);
         gameInstance.setPlayers(p);
+        gameInstance.startSpawner();
         gameInterface.hidePanel();
     }
 
@@ -431,7 +432,6 @@ public class GameMechanics {
         return false;
     }
 
-
     private static String prepareName(String rawName) {
         String[] words = rawName.split("[.]")[0].replaceAll("[-_]", " ").split(" ");
         StringBuilder resultBuilder = new StringBuilder();
@@ -474,4 +474,6 @@ public class GameMechanics {
             this.keyBinds = keyBinds;
         }
     }
+
+
 }

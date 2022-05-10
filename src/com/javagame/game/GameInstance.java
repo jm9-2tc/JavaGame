@@ -3,25 +3,24 @@ package com.javagame.game;
 import com.javagame.Constants;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.AttackMatrix;
-import com.javagame.game.entities.monster.Monster;
+import com.javagame.game.entities.monster.Dino;
+import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
+import com.javagame.resources.Resources;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static com.javagame.Game.gameInstance;
+import static com.javagame.game.entities.AttackMatrix.CROSS;
 
 public class GameInstance {
     public final GameEvents gameEvents;
-
-    public Player[] players;
-    public byte[][] boardPlayers;
-
-    public int width = 0;
-    public int height = 0;
-
-    public boolean ready = false;
-
     public final List<Monster> monsters;
-
+    public Player[] players;
+    //public byte[][] boardPlayers;
     private Arena arena;
 
     public GameInstance(GameEvents gameEvents) {
@@ -31,10 +30,20 @@ public class GameInstance {
     }
 
     public boolean isFieldEmpty(int x, int y) {
-        if (x < 0 || x >= boardPlayers.length || y < 0 || y >= boardPlayers[x].length) {
+        if (x < 0 || x >= arena.width || y < 0 || y >= arena.height) {
             return false;
         }
-        return boardPlayers[x][y] == 0;
+        for (Monster monster : monsters) {
+            if (monster.getX() == x && monster.getY() == y) {
+                return false;
+            }
+        }
+        for (Player player : players) {
+            if (player.getX() == x && player.getY() == y) {
+                return false;
+            }
+        }
+        return true;//boardPlayers[x][y] == 0;
     }
 
     public void attack(AttackMatrix matrix, int x, int y, int damage) {
@@ -43,7 +52,7 @@ public class GameInstance {
                 for (int a = x - 2; a <= x + 2; a++) {
                     for (int b = y - 2; b <= y + 2; b++) {
                         if (a == x && b == y) continue;
-                        tryAttackPlayer(a, b, damage);
+                        tryAttack(a, b, damage);
                     }
                 }
                 break;
@@ -52,36 +61,53 @@ public class GameInstance {
                 for (int a = x - 1; a <= x + 1; a++) {
                     for (int b = y - 1; b <= y + 1; b++) {
                         if (a == x && b == y) continue;
-                        tryAttackPlayer(a, b, damage);
+                        tryAttack(a, b, damage);
                     }
                 }
                 break;
 
             case CROSS:
-                tryAttackPlayer(x - 1, y, damage);
-                tryAttackPlayer(x + 1, y, damage);
-                tryAttackPlayer(x, y - 1, damage);
-                tryAttackPlayer(x, y + 1, damage);
+                tryAttack(x - 1, y, damage);
+                tryAttack(x + 1, y, damage);
+                tryAttack(x, y - 1, damage);
+                tryAttack(x, y + 1, damage);
                 break;
 
             case CORNERS:
-                tryAttackPlayer(x - 1, y - 1, damage);
-                tryAttackPlayer(x + 1, y - 1, damage);
-                tryAttackPlayer(x - 1, y + 1, damage);
-                tryAttackPlayer(x + 1, y + 1, damage);
+                tryAttack(x - 1, y - 1, damage);
+                tryAttack(x + 1, y - 1, damage);
+                tryAttack(x - 1, y + 1, damage);
+                tryAttack(x + 1, y + 1, damage);
                 break;
 
+            case SAMOJEB:
+                tryAttack(x, y, damage);
+                break;
         }
+    }
+
+    public void tryAttack(int x, int y, int damage) {
+        tryAttackPlayer(x, y, damage);
+        tryAttackMonster(x, y, damage);
     }
 
     public void tryAttackPlayer(int x, int y, int damage) {
         if (x < 0 || y < 0 || x >= arena.width || y >= arena.height) return;
-        byte playerId = boardPlayers[x][y];
-        if (playerId < 0) return;
+        int playerId = -1;
+        for (Player player : players) {
+            if (player.getX() == x && player.getY() == y) {
+                player.loseHealth(damage);
+                return;
+            }
+        }
+    }
 
-        Player player = players[playerId];
-        if (player != null) {
-            player.loseHealth(damage);
+    public void tryAttackMonster(int x, int y, int damage) {
+        if (x < 0 || y < 0 || x >= arena.width || y >= arena.height) return;
+        for (Monster monster : monsters) {
+            if (monster.getX() == x && monster.getY() == y) {
+                monster.loseHealth(damage);
+            }
         }
     }
 
@@ -89,9 +115,13 @@ public class GameInstance {
         while (true) {
             int newX = (int) (Math.random() * arena.width);
             int newY = (int) (Math.random() * arena.height);
-
-            if (boardPlayers[newX][newY] == 0 && arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
-                boardPlayers[newX][newY] = playerId;
+            for (Monster monster : monsters) {
+                if (monster.getX() == newX && monster.getY() == newY) {
+                    spawnPlayer(player, playerId);
+                }
+            }
+            if (isFieldEmpty(newX,newY) && arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
+                //boardPlayers[newX][newY] = playerId;
                 player.moveTo(newX, newY);
                 break;
             }
@@ -106,13 +136,38 @@ public class GameInstance {
             int newY = (int) (Math.random() * arena.height);
 
             if (arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
-                boardPlayers[newX][newY] = boardPlayers[x][y];
+                arena.blocks[newX][newY] = arena.blocks[x][y];
                 break;
             }
         }
-        boardPlayers[x][y] = -1;
+        //boardPlayers[x][y] = -1;
     }
 
+    public void spawnMonster(Monster newMonster) {
+        if (monsters.size() < Constants.MONSTER_LIMIT) {
+            while (true) {
+                int newX = (int) (Math.random() * arena.width);
+                int newY = (int) (Math.random() * arena.height);
+                for (Monster monster : monsters) {
+                    if (monster.getX() == newX && monster.getY() == newY) {
+                        spawnMonster(newMonster);
+                    }
+                }
+                if (isFieldEmpty(newX, newY) && arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
+                    newMonster.setX(newX);
+                    newMonster.setY(newY);
+                    monsters.add(newMonster);
+                    break;
+                }
+            }
+        }
+    }
+
+    public void startSpawner() {
+        TimerTask spawnerTask = new SpawnerTask();
+        Timer t = new Timer(true);
+        t.scheduleAtFixedRate(spawnerTask, 0, 10000);
+    }
 
     public Player[] getPlayers() {
         return players;
@@ -127,13 +182,19 @@ public class GameInstance {
         }
     }
 
-
     public Arena getArena() {
         return arena;
     }
 
     public void setArena(Arena arena) {
         this.arena = arena;
-        this.boardPlayers = new byte[arena.width][arena.height];
+        //this.boardPlayers = new byte[arena.width][arena.height];
+    }
+
+    public class SpawnerTask extends TimerTask {
+        @Override
+        public void run() {
+            spawnMonster(new Dino(gameInstance));
+        }
     }
 }

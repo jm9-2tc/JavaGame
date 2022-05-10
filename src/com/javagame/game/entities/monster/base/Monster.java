@@ -1,4 +1,4 @@
-package com.javagame.game.entities.monster;
+package com.javagame.game.entities.monster.base;
 
 import com.javagame.Constants;
 import com.javagame.game.GameInstance;
@@ -7,8 +7,10 @@ import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.entities.player.base.Player;
 
 import java.awt.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class Monster implements com.javagame.game.entities.monster.IMonster {
+public class Monster implements IMonster {
 
     private int health;
     private int x;
@@ -19,6 +21,9 @@ public class Monster implements com.javagame.game.entities.monster.IMonster {
     public final GameInstance gameInstance;
     public final AttackMatrix attackMatrix;
 
+    public boolean movingDisabled;
+    public boolean attackDisabled;
+
     public Monster(GameInstance gameInstance, Image texture, AttackMatrix attackMatrix, int damage) {
         this.x = 0;
         this.y = 0;
@@ -26,13 +31,26 @@ public class Monster implements com.javagame.game.entities.monster.IMonster {
         this.gameInstance = gameInstance;
         this.texture = texture;
         this.damage = damage;
+
+        this.movingDisabled = false;
+        this.attackDisabled = false;
+
+        TimerTask movingTask = new TimerTask() {
+            @Override
+            public void run() {
+                if(!movingDisabled) move();
+            }
+        };
+
+        Timer t = new Timer(true);
+        t.scheduleAtFixedRate(movingTask, 1000, 1000);
     }
 
     public void move() {
         gameInstance.attack(attackMatrix, x, y, damage);
         Player[] players = gameInstance.getPlayers();
         Player nearestPlayer = players[0];
-        double dist = Math.sqrt(Math.pow(nearestPlayer.getX(), 2) + Math.pow(nearestPlayer.getY(), 2));
+        double dist = Math.sqrt(Math.pow(nearestPlayer.getX()-this.x, 2) + Math.pow(nearestPlayer.getY()-this.y, 2));
         for (Player player : players) {
             if (dist > Math.sqrt(Math.pow(player.getX(), 2) + Math.pow(player.getY(), 2))) {
                 nearestPlayer = player;
@@ -75,10 +93,22 @@ public class Monster implements com.javagame.game.entities.monster.IMonster {
         return false;
     }
 
+    public void die(){
+        this.movingDisabled = true;
+        this.attackDisabled = true;
+        if(health == 0){
+            die();
+        }
+    }
+
     /*private byte[][] generateHeatMap(byte[][] arena){
 
         return arena;
     }*/
+    public void moveTo(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     public int getDamage() {
         return damage;
@@ -108,6 +138,9 @@ public class Monster implements com.javagame.game.entities.monster.IMonster {
         this.y = y;
     }
 
+    public Image getTexture(){
+        return texture;
+    }
 
     public void levelUp() {
 

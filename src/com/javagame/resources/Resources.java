@@ -8,6 +8,7 @@ import java.io.IOException;
 public class Resources {
     public static final String texturesPath = "src/com/javagame/resources/textures/";
     public static final String playerTexturesPath = "player/";
+    public static final String monsterTexturesPath = "monster/";
     public static final String blockTexturesPath = "block/";
     public static final String mapsPath = "map/";
 

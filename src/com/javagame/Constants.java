@@ -30,4 +30,8 @@ public class Constants {
     public static final byte BLOCK_SPIKY_BUSH = 2;
     public static final byte BLOCK_WATER = 3;
     public static final byte BLOCK_HP_POTION = 4;
+
+    // Other settings:
+
+    public static final short MONSTER_LIMIT = 5;
 }

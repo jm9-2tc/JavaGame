@@ -5,7 +5,6 @@ import com.javagame.game.IEntity;
 public interface IPlayer extends IEntity {
     void levelUp();
 
-    void loseHealth(int amount);
     void restoreHealth(int amount);
 
     void loseStamina(int amount);
