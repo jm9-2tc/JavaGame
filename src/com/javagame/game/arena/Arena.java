@@ -14,5 +14,6 @@ public class Arena {
         this.blocks = blocks;
         this.width = width;
         this.height = height;
+
     }
 }

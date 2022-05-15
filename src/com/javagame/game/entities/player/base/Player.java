@@ -37,7 +37,7 @@ public class Player implements IEntity {
     private int level = 1;
 
     private boolean attackDisabled = false;
-    private boolean movingDisabled;
+    private boolean movingDisabled = false;
 
     public Player(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
@@ -62,7 +62,7 @@ public class Player implements IEntity {
         this.stamina = maxStamina;
         this.mana = maxMana;
 
-        this.movingDisabled = true;
+        //this.movingDisabled = true;
     }
 
     public void setHealth(int health) {
@@ -191,6 +191,7 @@ public class Player implements IEntity {
         lastStep = frame;
 
         //System.out.println(frame);
+        if(movingDisabled) return;
 
         if (gameInstance.isFieldEmpty(newX, newY)) {
             Arena arena = gameInstance.getArena();

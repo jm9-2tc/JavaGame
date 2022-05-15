@@ -4,14 +4,12 @@ import com.javagame.Constants;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.entities.monster.Dino;
+import com.javagame.game.entities.monster.Glazojad;
 import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
 import com.javagame.resources.Resources;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 import static com.javagame.Game.gameInstance;
 import static com.javagame.game.entities.AttackMatrix.CROSS;
@@ -109,6 +107,7 @@ public class GameInstance {
                 monster.loseHealth(damage);
             }
         }
+        updateMonsterList();
     }
 
     public void spawnPlayer(Player player, byte playerId) {
@@ -191,10 +190,36 @@ public class GameInstance {
         //this.boardPlayers = new byte[arena.width][arena.height];
     }
 
+    public void updateMonsterList(){
+        int i = 0;
+        while(i< monsters.size()){
+            if(monsters.get(i).getHealth() == 0){
+                monsters.remove(i);
+            }
+            else{
+                i++;
+            }
+        }
+    }
+
     public class SpawnerTask extends TimerTask {
         @Override
         public void run() {
-            spawnMonster(new Dino(gameInstance));
+            Random r = new Random();
+            int los = r.nextInt(2);
+            Monster newMonster;
+            switch(los) {
+                case 0:
+                    newMonster = new Dino(gameInstance);
+                    break;
+                case 1:
+                    newMonster = new Glazojad(gameInstance);
+                    break;
+                default:
+                    newMonster = new Monster(gameInstance,Resources.loadTexture("default.png"),CROSS,0);
+                    break;
+            }
+            spawnMonster(newMonster);
         }
     }
 }

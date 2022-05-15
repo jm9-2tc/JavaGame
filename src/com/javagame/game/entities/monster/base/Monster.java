@@ -52,7 +52,7 @@ public class Monster implements IMonster {
         Player nearestPlayer = players[0];
         double dist = Math.sqrt(Math.pow(nearestPlayer.getX()-this.x, 2) + Math.pow(nearestPlayer.getY()-this.y, 2));
         for (Player player : players) {
-            if (dist > Math.sqrt(Math.pow(player.getX(), 2) + Math.pow(player.getY(), 2))) {
+            if (dist > Math.sqrt(Math.pow(player.getX()-this.x, 2) + Math.pow(player.getY()-this.y, 2))) {
                 nearestPlayer = player;
             }
         }
@@ -96,9 +96,7 @@ public class Monster implements IMonster {
     public void die(){
         this.movingDisabled = true;
         this.attackDisabled = true;
-        if(health == 0){
-            die();
-        }
+        //this.gameInstance.updateMonsterList();
     }
 
     /*private byte[][] generateHeatMap(byte[][] arena){
@@ -119,7 +117,7 @@ public class Monster implements IMonster {
     }
 
     public void setHealth(int health) {
-        this.health = health;
+        this.health = Math.max(0, health);
     }
 
     public int getX() {
@@ -148,6 +146,9 @@ public class Monster implements IMonster {
 
     @Override
     public void loseHealth(int amount) {
-
+        setHealth(this.health-amount);
+        if(health == 0){
+            die();
+        }
     }
 }
