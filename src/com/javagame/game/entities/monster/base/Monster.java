@@ -12,47 +12,57 @@ import java.util.TimerTask;
 
 public class Monster implements IMonster {
 
+    public final Image texture;
+    public final GameInstance gameInstance;
+    public final AttackMatrix attackMatrix;
+    private final int stepInterval;
+    private final int damage;
+    public boolean movingDisabled;
+    public boolean attackDisabled;
     private int health;
     private int x;
     private int y;
 
-    private final int damage;
-    public final Image texture;
-    public final GameInstance gameInstance;
-    public final AttackMatrix attackMatrix;
+    private long lastStep;
 
-    public boolean movingDisabled;
-    public boolean attackDisabled;
-
-    public Monster(GameInstance gameInstance, Image texture, AttackMatrix attackMatrix, int damage) {
+    public Monster(GameInstance gameInstance, Image texture, AttackMatrix attackMatrix, int damage, int stepInterval) {
         this.x = 0;
         this.y = 0;
         this.attackMatrix = attackMatrix;
         this.gameInstance = gameInstance;
         this.texture = texture;
         this.damage = damage;
+        this.stepInterval = stepInterval;
 
         this.movingDisabled = false;
         this.attackDisabled = false;
 
-        TimerTask movingTask = new TimerTask() {
+        /*TimerTask movingTask = new TimerTask() {
             @Override
             public void run() {
-                if(!movingDisabled) move();
+                if (!movingDisabled) move();
             }
         };
 
         Timer t = new Timer(true);
-        t.scheduleAtFixedRate(movingTask, 1000, 1000);
+        t.scheduleAtFixedRate(movingTask, 1000, 1000);*/
+    }
+
+    public void update() {
+        long frame = gameInstance.gameEvents.getFrame();
+        if (lastStep + stepInterval > frame) return;
+        lastStep = frame;
+
+        move();
     }
 
     public void move() {
         gameInstance.attack(attackMatrix, x, y, damage);
         Player[] players = gameInstance.getPlayers();
         Player nearestPlayer = players[0];
-        double dist = Math.sqrt(Math.pow(nearestPlayer.getX()-this.x, 2) + Math.pow(nearestPlayer.getY()-this.y, 2));
+        double dist = Math.sqrt(Math.pow(nearestPlayer.getX() - this.x, 2) + Math.pow(nearestPlayer.getY() - this.y, 2));
         for (Player player : players) {
-            if (dist > Math.sqrt(Math.pow(player.getX()-this.x, 2) + Math.pow(player.getY()-this.y, 2))) {
+            if (dist > Math.sqrt(Math.pow(player.getX() - this.x, 2) + Math.pow(player.getY() - this.y, 2))) {
                 nearestPlayer = player;
             }
         }
@@ -93,7 +103,7 @@ public class Monster implements IMonster {
         return false;
     }
 
-    public void die(){
+    public void die() {
         this.movingDisabled = true;
         this.attackDisabled = true;
         //this.gameInstance.updateMonsterList();
@@ -136,7 +146,7 @@ public class Monster implements IMonster {
         this.y = y;
     }
 
-    public Image getTexture(){
+    public Image getTexture() {
         return texture;
     }
 
@@ -146,8 +156,8 @@ public class Monster implements IMonster {
 
     @Override
     public void loseHealth(int amount) {
-        setHealth(this.health-amount);
-        if(health == 0){
+        setHealth(this.health - amount);
+        if (health == 0) {
             die();
         }
     }

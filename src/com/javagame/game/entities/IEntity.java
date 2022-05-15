@@ -1,11 +1,10 @@
-package com.javagame.game;
+package com.javagame.game.entities;
 
 import java.awt.*;
 
 public interface IEntity {
     void loseHealth(int amount);
     void moveTo(int x, int y);
-    void die();
     Image getTexture();
     int getX();
     int getY();

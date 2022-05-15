@@ -1,6 +1,6 @@
 package com.javagame.game.entities.player.base;
 
-import com.javagame.game.IEntity;
+import com.javagame.game.entities.IEntity;
 
 public interface IPlayer extends IEntity {
     void levelUp();

@@ -7,7 +7,7 @@ import com.javagame.resources.Resources;
 
 public class Dino extends Monster {
     public Dino(GameInstance gameInstance) {
-        super(gameInstance, Resources.loadTexture(Resources.monsterTexturesPath + "dino.png"), AttackMatrix.CROSS, 100);
+        super(gameInstance, Resources.loadTexture(Resources.monsterTexturesPath + "dino.png"), AttackMatrix.CROSS, 100, 12);
         this.setHealth(400);
     }
 }

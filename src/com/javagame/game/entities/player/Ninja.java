@@ -8,6 +8,6 @@ import java.awt.*;
 
 public class Ninja extends Player {
     public Ninja(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, int x, int y) {
-        super(name, gameInstance, keyBinds, texture, Type.NINJA, AttackMatrix.CORNERS, 50, x, y, 50, 1200, 1000, 800);
+        super(name, gameInstance, keyBinds, texture, Type.NINJA, AttackMatrix.CORNERS, 50, x, y, 2, 1200, 1000, 800);
     }
 }

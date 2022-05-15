@@ -21,16 +21,6 @@ public class Game {
         screen.addInterface(gameInterface);
         mechanics.setup();
 
-        /*Player.KeyBinds defaultKeys = new Player.KeyBinds(KeyEvent.VK_W, KeyEvent.VK_S, KeyEvent.VK_A, KeyEvent.VK_D, KeyEvent.VK_SPACE);
-
-        Player[] players = new Player[] {
-                new Knight("player1", gameInstance, defaultKeys, Resources.loadTexture(Resources.playerTexturesPath + "knight.png"), 5, 5)
-        };*/
-
-        //Arena arena = ArenaLoader.load("great-labyrinth", blockTextures);
-
-        //gameInstance.setPlayers(players);
-
         window.add(screen);
 
         events.setup(gameInstance, screen);

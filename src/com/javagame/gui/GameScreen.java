@@ -3,13 +3,12 @@ package com.javagame.gui;
 import com.javagame.Constants;
 import com.javagame.game.GameEvents;
 import com.javagame.game.GameInstance;
-import com.javagame.game.IEntity;
+import com.javagame.game.entities.IEntity;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
 
 import javax.swing.*;
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;

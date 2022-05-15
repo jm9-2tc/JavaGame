@@ -8,6 +8,6 @@ import java.awt.*;
 
 public class Sumo extends Player {
     public Sumo(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, int x, int y) {
-        super(name, gameInstance, keyBinds, texture, Type.SUMO, AttackMatrix.CROSS, 150, x, y, 500, 750, 600, 100);
+        super(name, gameInstance, keyBinds, texture, Type.SUMO, AttackMatrix.CROSS, 150, x, y, 6, 750, 600, 100);
     }
 }

@@ -1,10 +1,5 @@
 package com.javagame;
 
-import com.javagame.resources.Resources;
-
-import java.io.File;
-import java.util.Objects;
-
 public class Constants {
     // GUI:
 
@@ -12,8 +7,7 @@ public class Constants {
 
     // Game:
 
-    public static final File[] ARENAS_FILES = Objects.requireNonNull(new File(Resources.texturesPath+"/map").listFiles());
-    public static final int ARENAS_COUNT = ARENAS_FILES.length;
+    public static final int FRAMES_PER_SECOND = 60;
 
     public static final int DAMAGE_COLLIDE_SPIKY_BUSH = 100;
     public static final int POTION_HEALTH_RESTORED = 100;

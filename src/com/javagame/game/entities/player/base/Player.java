@@ -3,13 +3,12 @@ package com.javagame.game.entities.player.base;
 import com.javagame.Constants;
 import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.GameInstance;
-import com.javagame.game.IEntity;
+import com.javagame.game.entities.IEntity;
 import com.javagame.game.arena.Arena;
 
 import java.awt.*;
 
 public class Player implements IEntity {
-
     public final String name;
 
     public final Type type;
@@ -21,10 +20,8 @@ public class Player implements IEntity {
     public final int maxHealth;
     public final int maxStamina;
     public final int maxMana;
-
-    private final int damage;
     public final int stepInterval;
-
+    private final int damage;
     private int health;
     private int stamina;
     private int mana;
@@ -34,10 +31,7 @@ public class Player implements IEntity {
 
     private long lastStep = 0;
 
-    private int level = 1;
-
     private boolean attackDisabled = false;
-    private boolean movingDisabled = false;
 
     public Player(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, Type type, AttackMatrix attackMatrix, int damage, int x, int y, int stepInterval, int maxHealth, int maxStamina, int maxMana) {
         this.gameInstance = gameInstance;
@@ -61,30 +55,12 @@ public class Player implements IEntity {
         this.health = maxHealth;
         this.stamina = maxStamina;
         this.mana = maxMana;
-
-        //this.movingDisabled = true;
-    }
-
-    public void setHealth(int health) {
-        this.health = Math.max(0, Math.min(health, maxHealth));
-    }
-
-    public void setStamina(int stamina) {
-        this.stamina = Math.max(0, Math.min(stamina, maxStamina));
-    }
-
-    public void setMana(int mana) {
-        this.mana = Math.max(0, Math.min(mana, maxMana));
-    }
-
-    public void levelUp() {
-        level++;
     }
 
     public void loseHealth(int amount) {
         setHealth(health - amount);
-        if(health == 0){
-            die();
+        if (health == 0) {
+            gameInstance.handleGameOver(this);
         }
     }
 
@@ -104,13 +80,8 @@ public class Player implements IEntity {
         setMana(mana - amount);
     }
 
-    public void restoreMana(int amount){
+    public void restoreMana(int amount) {
         setMana(mana + amount);
-    }
-
-    public void die(){
-        this.movingDisabled = true;
-        this.attackDisabled = true;
     }
 
     public int getX() {
@@ -125,15 +96,27 @@ public class Player implements IEntity {
         return health;
     }
 
+    public void setHealth(int health) {
+        this.health = Math.max(0, Math.min(health, maxHealth));
+    }
+
     public int getStamina() {
         return stamina;
+    }
+
+    public void setStamina(int stamina) {
+        this.stamina = Math.max(0, Math.min(stamina, maxStamina));
     }
 
     public int getMana() {
         return mana;
     }
 
-    public Image getTexture(){
+    public void setMana(int mana) {
+        this.mana = Math.max(0, Math.min(mana, maxMana));
+    }
+
+    public Image getTexture() {
         return texture;
     }
 
@@ -161,7 +144,7 @@ public class Player implements IEntity {
                 return true;
 
             case Constants.BLOCK_SPIKY_BUSH:
-                setHealth(health - Constants.DAMAGE_COLLIDE_SPIKY_BUSH);
+                loseHealth(Constants.DAMAGE_COLLIDE_SPIKY_BUSH);
                 break;
 
             case Constants.BLOCK_WATER:
@@ -190,9 +173,6 @@ public class Player implements IEntity {
 
         lastStep = frame;
 
-        //System.out.println(frame);
-        if(movingDisabled) return;
-
         if (gameInstance.isFieldEmpty(newX, newY)) {
             Arena arena = gameInstance.getArena();
             if (!onCollideWith(arena, newX, newY)) {
@@ -200,6 +180,13 @@ public class Player implements IEntity {
                 y = newY;
             }
         }
+    }
+
+    public enum Type {
+        KNIGHT,
+        ARCHER,
+        NINJA,
+        SUMO
     }
 
     public static class KeyBinds {
@@ -216,12 +203,5 @@ public class Player implements IEntity {
             this.moveRight = moveRight;
             this.attack = attack;
         }
-    }
-
-    public enum Type {
-        KNIGHT,
-        ARCHER,
-        NINJA,
-        SUMO
     }
 }

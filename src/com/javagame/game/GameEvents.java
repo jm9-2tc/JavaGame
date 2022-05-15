@@ -1,16 +1,14 @@
 package com.javagame.game;
 
+import com.javagame.Constants;
 import com.javagame.game.entities.monster.base.Monster;
 import com.javagame.game.entities.player.base.Player;
 import com.javagame.gui.GameScreen;
-import com.javagame.resources.Resources;
 
-import javax.swing.*;
-import java.util.TimerTask;
+import java.util.Iterator;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static com.javagame.game.entities.AttackMatrix.CROSS;
 
 public class GameEvents implements Runnable {
     private GameInstance gameInstance;
@@ -19,18 +17,28 @@ public class GameEvents implements Runnable {
     private boolean keyboardDisabled = false;
 
     private final AtomicLong frame = new AtomicLong(0);
+    private final Timer timer = new Timer(true);
+    private final TimerTask gameLoop = new TimerTask() {
+        @Override
+        public void run() {
+            play();
+        }
+    };
 
     public void play() {
-        while (true) {
-            panel.repaint();
-            frame.incrementAndGet();
+        for (Monster monster : gameInstance.monsters) {
+            monster.update();
         }
+
+        panel.repaint();
+        frame.incrementAndGet();
     }
 
 
     public void setup(GameInstance gameInstance, GameScreen panel) {
         this.gameInstance = gameInstance;
         this.panel = panel;
+        resume();
     }
 
 
@@ -46,8 +54,14 @@ public class GameEvents implements Runnable {
         }
     }
 
-    public synchronized void disableKeyboard(boolean disable) {
-        keyboardDisabled = disable;
+    public synchronized void pause() {
+        keyboardDisabled = true;
+        timer.cancel();
+    }
+
+    public synchronized void resume() {
+        keyboardDisabled = false;
+        timer.schedule(gameLoop, 0, 1000 / Constants.FRAMES_PER_SECOND);
     }
 
     public synchronized long getFrame() {

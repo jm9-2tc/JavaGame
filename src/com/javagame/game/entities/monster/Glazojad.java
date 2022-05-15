@@ -10,7 +10,7 @@ import java.awt.*;
 public class Glazojad extends Monster {
 
     public Glazojad(GameInstance gameInstance) {
-        super(gameInstance, Resources.loadTexture(Resources.monsterTexturesPath+"glazojad.png"), AttackMatrix.SQUARE, 120);
+        super(gameInstance, Resources.loadTexture(Resources.monsterTexturesPath+"glazojad.png"), AttackMatrix.SQUARE, 120, 20);
         setHealth(1300);
     }
 }

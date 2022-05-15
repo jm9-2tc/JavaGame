@@ -33,6 +33,7 @@ public class GameMechanics {
 
     private static final GamePanel welcomePanel;
     private static final GamePanel playersCreatorPanel;
+    private static final GamePanel gameOverPanel;
 
     private static final String[] blocksTextures;
     private static final Pair<String[], String[]> arenas = new Pair<>(null, null);
@@ -54,6 +55,8 @@ public class GameMechanics {
 
     private GameInput playerNameInput;
     private GameLabel playerCreatorWarningLabel;
+
+    private GameLabel gameOverInfoLabel;
 
     private int selectedPlayer = -1;
 
@@ -126,6 +129,7 @@ public class GameMechanics {
 
         welcomePanel = new GamePanel(480, 420, textColor, btnColor, bgColor);
         playersCreatorPanel = new GamePanel(720, 800, textColor, btnColor, bgColor);
+        gameOverPanel = new GamePanel(640, 240, textColor, btnColor, bgColor);
     }
 
     public GameMechanics(GameInstance gameInstance, GameScreen gameScreen, GameInterface game) {
@@ -155,9 +159,9 @@ public class GameMechanics {
         playerClassCombo = new GameComboBox(btnSize, getPlayersClasses(), (arg) -> {});
         playerKeyBindsCombo = new GameComboBox(btnSize, keyBindsPresets.first, (arg) -> {});
 
-        playerAddBtn = new GameButton(btnSize, "add player", Game.mechanics::addPlayer);
-        playerUpdateBtn = new GameButton(btnSize, "update player", Game.mechanics::updatePlayer);
-        playerRemoveBtn = new GameButton(btnSize, "remove player", Game.mechanics::removePlayer);
+        playerAddBtn = new GameButton(btnSize, "add player", this::addPlayer);
+        playerUpdateBtn = new GameButton(btnSize, "update player", this::updatePlayer);
+        playerRemoveBtn = new GameButton(btnSize, "remove player", this::removePlayer);
 
         playerNameInput = new GameInput(btnSize);
         playerCreatorWarningLabel = new GameLabel("");
@@ -186,7 +190,16 @@ public class GameMechanics {
         playersCreatorPanel.addComponent(playerUpdateBtn);
         playersCreatorPanel.addComponent(playerRemoveBtn);
 
-        playersCreatorPanel.addComponent(new GameButton(btnSize, "accept all", Game.mechanics::showWelcomePanel));
+        playersCreatorPanel.addComponent(new GameButton(btnSize, "accept all", this::showWelcomePanel));
+
+        // Game over panel:
+
+        gameOverInfoLabel = new GameLabel("");
+
+        gameOverPanel.addComponent(new GameLabel("GAME OVER", 72));
+        gameOverPanel.addComponent(gameOverInfoLabel);
+        gameOverPanel.addComponent(new GameButton(btnSize, "Respawn", this::clickRespawn));
+        gameOverPanel.addComponent(new GameButton(btnSize, "Quit game", () -> System.exit(0)));
 
         loadArena(0);
     }
@@ -232,6 +245,22 @@ public class GameMechanics {
                 return new Sumo(data.name, gameInstance, data.keyBinds, texture, 0, 0);
         }
         return null;
+    }
+
+    // game over panel methods:
+
+    public void showGameOverPanel(String playerName) {
+        gameOverInfoLabel.setText("Player '" + playerName + "' is dead.");
+        gameOverInfoLabel.refresh();
+
+        gameInterface.setPanel(gameOverPanel);
+
+        Game.events.pause();
+    }
+
+    public void clickRespawn() {
+        gameInterface.hidePanel();
+        Game.events.resume();
     }
 
     // players creator panel methods:

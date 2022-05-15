@@ -1,6 +1,7 @@
 package com.javagame.game;
 
 import com.javagame.Constants;
+import com.javagame.Game;
 import com.javagame.game.arena.Arena;
 import com.javagame.game.entities.AttackMatrix;
 import com.javagame.game.entities.monster.Dino;
@@ -16,13 +17,15 @@ import static com.javagame.game.entities.AttackMatrix.CROSS;
 
 public class GameInstance {
     public final GameEvents gameEvents;
+
     public final List<Monster> monsters;
+
     public Player[] players;
-    //public byte[][] boardPlayers;
     private Arena arena;
 
     public GameInstance(GameEvents gameEvents) {
         this.gameEvents = gameEvents;
+
         this.players = new Player[0];
         this.monsters = new ArrayList<>();
     }
@@ -41,7 +44,7 @@ public class GameInstance {
                 return false;
             }
         }
-        return true;//boardPlayers[x][y] == 0;
+        return true;
     }
 
     public void attack(AttackMatrix matrix, int x, int y, int damage) {
@@ -110,36 +113,27 @@ public class GameInstance {
         updateMonsterList();
     }
 
-    public void spawnPlayer(Player player, byte playerId) {
+    public void spawnPlayer(Player player) {
         while (true) {
             int newX = (int) (Math.random() * arena.width);
             int newY = (int) (Math.random() * arena.height);
             for (Monster monster : monsters) {
                 if (monster.getX() == newX && monster.getY() == newY) {
-                    spawnPlayer(player, playerId);
+                    spawnPlayer(player);
                 }
             }
             if (isFieldEmpty(newX,newY) && arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
-                //boardPlayers[newX][newY] = playerId;
                 player.moveTo(newX, newY);
                 break;
             }
         }
     }
 
-    public void handleGameOver(String name, int x, int y) {
-        //TODO: show UI
+    public void handleGameOver(Player player) {
+        Game.mechanics.showGameOverPanel(player.name);
 
-        while (true) {
-            int newX = (int) (Math.random() * arena.width);
-            int newY = (int) (Math.random() * arena.height);
-
-            if (arena.blocks[newX][newY] == Constants.BLOCK_GRASS) {
-                arena.blocks[newX][newY] = arena.blocks[x][y];
-                break;
-            }
-        }
-        //boardPlayers[x][y] = -1;
+        player.setHealth(player.maxHealth);
+        spawnPlayer(player);
     }
 
     public void spawnMonster(Monster newMonster) {
@@ -174,10 +168,9 @@ public class GameInstance {
 
     public void setPlayers(Player[] players) {
         this.players = players;
-        byte index = 0;
 
         for (Player player : players) {
-            spawnPlayer(player, index++);
+            spawnPlayer(player);
         }
     }
 
@@ -187,7 +180,6 @@ public class GameInstance {
 
     public void setArena(Arena arena) {
         this.arena = arena;
-        //this.boardPlayers = new byte[arena.width][arena.height];
     }
 
     public void updateMonsterList(){
@@ -206,18 +198,19 @@ public class GameInstance {
         @Override
         public void run() {
             Random r = new Random();
-            int los = r.nextInt(2);
+            int id = r.nextInt(2);
             Monster newMonster;
-            switch(los) {
+            switch(id) {
                 case 0:
                     newMonster = new Dino(gameInstance);
                     break;
+
                 case 1:
                     newMonster = new Glazojad(gameInstance);
                     break;
+
                 default:
-                    newMonster = new Monster(gameInstance,Resources.loadTexture("default.png"),CROSS,0);
-                    break;
+                    return;
             }
             spawnMonster(newMonster);
         }

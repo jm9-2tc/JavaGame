@@ -8,6 +8,6 @@ import java.awt.*;
 
 public class Archer extends Player {
     public Archer(String name, GameInstance gameInstance, KeyBinds keyBinds, Image texture, int x, int y) {
-        super(name, gameInstance, keyBinds, texture, Type.ARCHER, AttackMatrix.ALL, 50, x, y, 50, 750, 800, 600);
+        super(name, gameInstance, keyBinds, texture, Type.ARCHER, AttackMatrix.ALL, 50, x, y, 2, 750, 800, 600);
     }
 }
