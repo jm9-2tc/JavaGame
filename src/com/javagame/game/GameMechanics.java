@@ -251,8 +251,6 @@ public class GameMechanics {
 
     public void showGameOverPanel(String playerName) {
         gameOverInfoLabel.setText("Player '" + playerName + "' is dead.");
-        gameOverInfoLabel.refresh();
-
         gameInterface.setPanel(gameOverPanel);
 
         Game.events.pause();

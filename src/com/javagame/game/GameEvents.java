@@ -14,16 +14,11 @@ public class GameEvents implements Runnable {
     private GameInstance gameInstance;
     private GameScreen panel;
 
+    private Timer timer;
+
     private boolean keyboardDisabled = false;
 
     private final AtomicLong frame = new AtomicLong(0);
-    private final Timer timer = new Timer(true);
-    private final TimerTask gameLoop = new TimerTask() {
-        @Override
-        public void run() {
-            play();
-        }
-    };
 
     public void play() {
         for (Monster monster : gameInstance.monsters) {
@@ -38,6 +33,7 @@ public class GameEvents implements Runnable {
     public void setup(GameInstance gameInstance, GameScreen panel) {
         this.gameInstance = gameInstance;
         this.panel = panel;
+        this.timer = new Timer(true);
         resume();
     }
 
@@ -61,6 +57,15 @@ public class GameEvents implements Runnable {
 
     public synchronized void resume() {
         keyboardDisabled = false;
+
+        TimerTask gameLoop = new TimerTask() {
+            @Override
+            public void run() {
+                play();
+            }
+        };
+
+        timer = new Timer(true);
         timer.schedule(gameLoop, 0, 1000 / Constants.FRAMES_PER_SECOND);
     }
 
